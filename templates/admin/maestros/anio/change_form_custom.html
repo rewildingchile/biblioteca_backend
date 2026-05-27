@@ -1,0 +1,167 @@
+{% extends "admin/change_form.html" %}
+
+{% block object-tools %}
+    {{ block.super }}
+<ul class="ul-addicional">
+    {% if original and original.status == "borrador" %}
+        <li class="li-import">
+            <a href="#" class="button importar"  onclick="abrirModal(event)">
+                Importar datos  
+            </a>
+        </li>
+ </ul>       
+    {% endif %}
+{% endblock %}
+
+
+{% block extrahead %}
+{{ block.super }}
+
+<style> 
+ 
+ .li-import{
+        list-style-type: none;
+ }
+ 
+ .importar{
+    background-color: blueviolet!important;
+   padding:12px 12px 12px 12px!important;
+ }
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+}
+.modal-content {
+    background: white;
+    padding: 20px;
+    margin: 10% auto;
+    width: 420px;
+    border-radius: 8px;
+    text-align: center;
+}
+.modal-content h3 {
+    margin-top: 0;
+}
+.warning {
+    color: #b91c1c;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.buttons {
+    margin-top: 20px;
+}
+.buttons a, .buttons button {
+    margin: 5px;
+}
+.default{
+    padding: 10px 15px!important;
+}
+.loading-overlay {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    text-align: center;
+}
+
+.loading-overlay p {
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+/* Spinner */
+.spinner {
+    margin: 200px auto 0;
+    width: 60px;
+    height: 60px;
+    border: 6px solid #ccc;
+    border-top: 6px solid #4CAF50;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+function abrirModal(e) {
+    e.preventDefault();
+    document.getElementById("modalConfirm").style.display = "block";
+}
+
+function cerrarModal() {
+    document.getElementById("modalConfirm").style.display = "none";
+}
+
+// cerrar haciendo click fuera del modal
+window.onclick = function(event) {
+    let modal = document.getElementById("modalConfirm");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+}
+
+function ejecutarImport(e) {
+    e.preventDefault();
+
+    // cerrar modal
+    cerrarModal();
+
+    // mostrar spinner
+    document.getElementById("loadingOverlay").style.display = "block";
+
+    // redirigir (pequeño delay para que se vea el spinner)
+    setTimeout(function() {
+        window.location.href = "{% url 'admin:maestros_anio_clonar' original.pk %}?preview=false";
+    }, 300);
+}
+</script>
+
+{% endblock %}
+
+
+{% block content %}
+{{ block.super }}
+
+{% if original and original.status == "borrador" %}
+<div id="modalConfirm" class="modal">
+    <div class="modal-content">
+        <h3>¿Importar datos de ultimo presupuesto?</h3>
+
+        <p>
+            Se copiarán los datos desde el <strong>año marcado como 'abierto'</strong><br>
+            hacia este año: <strong>{{ original.aa }} 'Borrador'</strong>
+        </p>
+
+        
+        <div class="buttons">
+            <!-- 👇 ahora solo envía p_borrador -->
+            <a href="#"
+                class="button default"
+                onclick="ejecutarImport(event)">
+                    Sí, Importar datos
+                </a>
+
+            <button class="button" onclick="cerrarModal()">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Importando datos... por favor espera</p>
+</div>
+{% endif %}
+
+{% endblock %}

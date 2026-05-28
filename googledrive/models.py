@@ -85,7 +85,18 @@ class GoogleDriveSyncState(models.Model):
 
 from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
+'''en Django ORM hay diferencia entre:
+nombre de la columna SQL
+nombre del campo del modelo ORM (lo que django puede entender)
 
+GoogleDriveFileDocument.objects.get(file="abc123")
+GoogleDriveFileDocument.objects.get(file_id="abc123")
+
+no funciona:
+GoogleDriveFileDocument.objects.get(drive_file_id="abc123")
+drive_file_id es el nombre fisico de la columna, no del orm
+
+'''
 class GoogleDriveFileDocument(models.Model):
 
     file = models.OneToOneField(

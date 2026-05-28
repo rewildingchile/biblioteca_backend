@@ -11,6 +11,9 @@ from rest_framework import generics
 from rest_framework import serializers
 from django.http import Http404
 
+from .serializers import GoogleDriveFileDocumentSerializer
+from .models import GoogleDriveFileDocument
+
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
@@ -125,7 +128,35 @@ class DriveSyncStatusView(APIView):
       }
 
       return Response(response)
-    
+
+class FileDocumentView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        file_id = request.data.get("file_id")
+       
+        logger.info( f" {logger.name} : consultando datos filedocument")
+      
+        '''Obtén un GoogleDriveFileDocument cuyo GoogleDriveFile relacionado tenga drive_file_id = "1" 
+        y trae ambos objetos en una sola query SQL”.'''
+
+        existe=  GoogleDriveFileDocument.objects.filter(
+            file__drive_file_id=file_id
+        ).exists()
+        if existe:
+            try:
+                documento=GoogleDriveFileDocument.objects.select_related( "file" ).get(  file__drive_file_id= file_id) 
+            except GoogleDriveFileDocument.DoesNotExist:
+                                    documento = None
+
+            serializer = GoogleDriveFileDocumentSerializer(
+                documento
+            )
+
+            return Response(serializer.data)
+        else:
+            return Response({"status":404})
+        
 
 from rest_framework.views import APIView
 from rest_framework.response import Response

@@ -19,11 +19,12 @@ from django.urls import path, include
 from django.contrib.admin.views.decorators import staff_member_required
 from .views import LoginView,LoginJWTView , RefreshTokenView, LoginJWTTemporalView , VerifyOtpView,GenerateBackupCodesView
 
+
 from googledrive.views import SyncFullView
 from googledrive.views import DriveSyncStatusView
 from googledrive.views import DriveTreeView
 from googledrive.views import SyncChangesView 
- 
+from googledrive.views import FileDocumentView 
 from logging_conf.views import ver_activity_log, ver_importlibromayor_log
 
 
@@ -36,8 +37,10 @@ urlpatterns = [
     path('api/v2/verify-otp/', VerifyOtpView.as_view(), name="verify-otp" ),
     path('api/v1/generatebackupcodes/',GenerateBackupCodesView.as_view(),name="GenerateBackupCodesView"),
     path('api/v1/token/refresh/', RefreshTokenView.as_view(), name='token-refresh'),
+    path("api/v1/filedocument/",  FileDocumentView.as_view()),
     path('api/v1/drive/syncfull/', SyncFullView.as_view()) ,
     path('api/v1/drive/syncchanges/', SyncChangesView.as_view()) ,
     path('api/v1/drive/sync/status/<str:task_id>/', DriveSyncStatusView.as_view()),
     path("drive/tree/<int:area_id>/",DriveTreeView.as_view()),
+
 ]

@@ -34,7 +34,7 @@ class GoogleDriveFile(models.Model):
         max_length=255,
         help_text="El tipo MIME de Google (application/vnd.google-apps.folder para carpetas)."
     )
-    parent_drive_file_id = models.ForeignKey(
+    parent_drive_file = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
         to_field='drive_file_id',
@@ -64,7 +64,7 @@ class GoogleDriveFile(models.Model):
         verbose_name_plural = "Archivos de Google Drive"
         indexes = [
             models.Index(fields=['drive_file_id']),
-            models.Index(fields=['parent_drive_file_id']),
+            models.Index(fields=['parent']),
             models.Index(fields=['last_known_modified_time']),
         ]
 

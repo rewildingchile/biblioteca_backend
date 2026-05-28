@@ -16,7 +16,7 @@ def obtener_arbol_area(area_id):
         "drive_file_id",
         "name",
         "mime_type",
-        "parent_drive_file_id_id",
+        "parent_id",
         "drive_web_view_link",
         "last_known_modified_time",
         # campos relacionados
@@ -54,13 +54,14 @@ def obtener_arbol_area(area_id):
             "text_content": item[
                             "document__text_content"
                         ],
+            "parent_id":item["parent_id"]             ,
             "children": []
 
         }
 
         nodes[item["drive_file_id"]] = node
 
-        parent = item["parent_drive_file_id_id"]
+        parent = item["parent_id"]
 
         if parent:
 

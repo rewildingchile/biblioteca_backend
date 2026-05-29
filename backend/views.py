@@ -332,5 +332,41 @@ def generate_single_backup_code(user):
 
     return "ok"
      
+class Test(APIView):
+    def get(self,request):
+            return Response({
+                "status": 200,
+                "message": "hola!",
+                
+            }, status=status.HTTP_200_OK)
+class M2mTokenView(APIView):
+    authentication_classes = []
+    permission_classes = []
+    def post(self, request):        
+        try:
 
-   
+            client_id = request.data.get("client_id")
+            client_secret = request.data.get("client_secret")
+            if (  client_id != settings.M2M_CLIENT_ID or  client_secret != settings.M2M_CLIENT_SECRET  ):
+                return Response(
+                    {"error": "Credenciales inválidas"},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            # Intentar validar y crear nuevo access token
+            refresh = RefreshToken(refresh_token)
+            new_access_token = str(refresh.access_token)
+
+            return Response({
+                "status": 200,
+                "message": "Nuevo token generado correctamente.",
+                "payload": {
+                    "access": new_access_token
+                }
+            }, status=status.HTTP_200_OK)
+
+        except TokenError as e:
+            return Response({
+                "status": 401,
+                "message": "Token inválido o expirado.",
+                "error": str(e)
+            }, status=status.HTTP_401_UNAUTHORIZED)

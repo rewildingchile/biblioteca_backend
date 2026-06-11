@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from .serializers import LoginSerializer
 from .serializers import LoginJWTSerializer
@@ -344,25 +345,22 @@ class M2mTokenView(APIView):
     permission_classes = []
     def post(self, request):        
         try:
-
+          
             client_id = request.data.get("client_id")
             client_secret = request.data.get("client_secret")
-            if (  client_id != settings.M2M_CLIENT_ID or  client_secret != settings.M2M_CLIENT_SECRET  ):
+            if (  client_id != os.getenv("M2M_CLIENT_ID") or  client_secret != os.getenv("M2M_CLIENT_SECRET")  ):
                 return Response(
                     {"error": "Credenciales inválidas"},
                     status=status.HTTP_401_UNAUTHORIZED
                 )
-            # Intentar validar y crear nuevo access token
-            refresh = RefreshToken(refresh_token)
-            new_access_token = str(refresh.access_token)
+            user = User.objects.get(username=os.getenv("M2M_USERNAME"))
+
+            refresh = RefreshToken.for_user(user)
+
 
             return Response({
-                "status": 200,
-                "message": "Nuevo token generado correctamente.",
-                "payload": {
-                    "access": new_access_token
-                }
-            }, status=status.HTTP_200_OK)
+                "access": str(refresh.access_token)
+            })
 
         except TokenError as e:
             return Response({
@@ -370,3 +368,4 @@ class M2mTokenView(APIView):
                 "message": "Token inválido o expirado.",
                 "error": str(e)
             }, status=status.HTTP_401_UNAUTHORIZED)
+    

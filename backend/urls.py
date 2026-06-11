@@ -24,8 +24,8 @@ from googledrive.views import SyncFullView
 from googledrive.views import DriveSyncStatusView
 from googledrive.views import DriveTreeView
 from googledrive.views import SyncChangesView 
-from googledrive.views import FileDocumentView 
-from  .views import M2mTokenView, Test
+from googledrive.views import FileDocumentView , FileDocumentContentView, FileDocumentUpload,PrepareUploadView
+from  .views import M2mTokenView, Test 
 from logging_conf.views import ver_activity_log, ver_importlibromayor_log
 
 
@@ -44,5 +44,8 @@ urlpatterns = [
     path('api/v1/drive/sync/status/<str:task_id>/', DriveSyncStatusView.as_view()),
     path("drive/tree/<int:area_id>/",DriveTreeView.as_view()),
     path("api/v1/auth/m2m-token",M2mTokenView.as_view()),
-    path("test/",Test.as_view())
+    path("test/",Test.as_view()),
+    path("api/v1/filedocument/content/", FileDocumentContentView.as_view()  ),
+    path("api/v1/upload/",FileDocumentUpload.as_view()),
+    path('api/v1/prepare-upload/', PrepareUploadView.as_view(), name='prepare-upload'), 
 ]

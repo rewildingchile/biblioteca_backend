@@ -34,7 +34,7 @@ class GoogleDriveFile(models.Model):
         max_length=255,
         help_text="El tipo MIME de Google (application/vnd.google-apps.folder para carpetas)."
     )
-    parent_drive_file = models.ForeignKey(
+    parent_drive_file_id = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
         to_field='drive_file_id',
@@ -64,7 +64,7 @@ class GoogleDriveFile(models.Model):
         verbose_name_plural = "Archivos de Google Drive"
         indexes = [
             models.Index(fields=['drive_file_id']),
-            models.Index(fields=['parent']),
+            models.Index(fields=['parent_drive_file_id']),
             models.Index(fields=['last_known_modified_time']),
         ]
 
@@ -95,7 +95,7 @@ GoogleDriveFileDocument.objects.get(file_id="abc123")
 no funciona:
 GoogleDriveFileDocument.objects.get(drive_file_id="abc123")
 drive_file_id es el nombre fisico de la columna, no del orm
-
+en orm la columna se llama 'file_id'
 '''
 class GoogleDriveFileDocument(models.Model):
 

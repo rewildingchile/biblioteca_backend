@@ -1,0 +1,12 @@
+CREATE OR REPLACE FUNCTION update_search_vector()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.search_vector := to_tsvector('spanish', COALESCE(NEW.text_content, ''));
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trig_update_search_vector
+BEFORE INSERT OR UPDATE OF text_content ON googledrive_googledrivefiledocument
+FOR EACH ROW
+EXECUTE FUNCTION update_search_vector();

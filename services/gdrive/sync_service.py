@@ -67,7 +67,7 @@ def sync_full(
     """
     Sincroniza recursivamente (iterativa) un Shared Drive completo.
     Las carpetas/archivos de primer nivel (hijos directos de folder_id)
-    tendrán como parent_drive_file_id el objeto correspondiente a folder_id.
+    tendrán como parent el objeto correspondiente a folder_id.
     """
     if sync_started_at is None:
         sync_started_at = timezone.now()
@@ -210,7 +210,7 @@ def sync_full(
             else:
                 logger.debug(f"Actualizado: {file_id} - {nombre}")
 
-            # Si es carpeta, encolar sus hijos (pero no la carpeta misma)
+            # Si es carpeta,  'enqueue' sus hijos (pero no la carpeta misma)
             if mime == FOLDER_MIME:
                 # Usamos el objeto recién creado como padre para los hijos
                 enqueue_children(file_id, obj)
@@ -468,6 +468,8 @@ def sync_changes(service, folder_id, area):
         fields="driveId",
         supportsAllDrives=True
     ).execute()
+    logger.info(f"******* AQUI ******")
+    logger.info(f"FOLDER: {root_info}")  
     drive_id = root_info["driveId"]
 
     # 3. Bucle de paginación sobre cambios
@@ -532,7 +534,7 @@ def sync_changes(service, folder_id, area):
                     parent_obj = GoogleDriveFile.objects.filter(drive_file_id=parent_drive_id).first()
 
                 # update_or_create
-                # Nota: si el campo parent_drive_file_id es una clave foránea, asignar parent_obj (instancia) es correcto.
+                # Nota: si el campo parent es una clave foránea, asignar parent_obj (instancia) es correcto.
                 # Si es un campo entero (IntegerField) usar parent_obj.pk si parent_obj else None.
                 GoogleDriveFile.objects.update_or_create(
                     drive_file_id=file_id,
@@ -567,7 +569,7 @@ def sync_changes(service, folder_id, area):
             state.save()
         break
 
-    logger.info(f"sync_changes completado area={area.id}")
+    logger.info(f"sync_changeXXX completado area={area.id}")
 
 
 def sync_changes_old(service,folder_id,  area):

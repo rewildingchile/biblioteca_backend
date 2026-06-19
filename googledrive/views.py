@@ -13,6 +13,8 @@ from django.http import Http404
 
 from .serializers import GoogleDriveFileDocumentSerializer
 from .models import GoogleDriveFileDocument
+from .models import GoogleDriveFile
+from .models import Area
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -20,10 +22,9 @@ from googleapiclient.http import MediaIoBaseDownload
 from pypdf import PdfReader
 import io
 
-
 import datetime
 from django.utils import timezone
-
+from django.db import transaction
 from googleapiclient.discovery import build
 
 import logging
@@ -74,13 +75,13 @@ class SyncFullView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, area_id ,*args, **kwargs):
        
         logger.info( f" {logger.name} : llamando->sync_full_task")
         # la vista dispara el proceso Y la tarea pesada corre aparte:
 
         # delay() retorna un objeto AsyncResult.
-        area_id=1
+      
         task = sync_full_task.delay(area_id)
         
         logger.info(f"TAREA CELERY ID: {task.id}")
@@ -96,13 +97,13 @@ class SyncChangesView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, area_id, *args, **kwargs):
        
         logger.info( f" {logger.name} : llamando->sync_changes_task")
         # la vista dispara el proceso Y la tarea pesada corre aparte:
 
         # delay() retorna un objeto AsyncResult.
-        area_id=1
+         
         task = sync_changes_task.delay(area_id)
         
         logger.info(f"TAREA CELERY ID: {task.id}")
@@ -231,24 +232,39 @@ class PrepareUploadView(APIView):
     def post(self, request):
         folder_id = request.data.get('folder_id')
         relative_path = request.data.get('relative_path', '')
-        
+        area_id = request.data.get('area_id')
         if not folder_id:
             return Response(
                 {'error': 'Se requiere folder_id'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
+        area = Area.objects.get(id=area_id)
+
+        
         try:
-            google_drive = GoogleDriveService()  # Singleton
+            google_drive = GoogleDriveService() 
             
             if relative_path:
-                final_folder_id = google_drive.create_folder_structure(
+                obj = google_drive.create_folder_structure(
                     folder_id, 
                     relative_path
                 )
+                final_folder_id=obj['file_id']
             else:
                 final_folder_id = folder_id
-            
+
+            parent_obj = GoogleDriveFile.objects.filter(drive_file_id=obj["parent_folder_id"]).first() 
+            GoogleDriveFile.objects.update_or_create(
+                    drive_file_id=final_folder_id,
+                    defaults={
+                        "area": area,
+                        "name": obj['name'],
+                        "mime_type": obj['mime_type'],
+                        "parent_drive_file_id": parent_obj,  # Django ORM acepta instancia para ForeignKey
+                        "drive_web_view_link": obj['web_view_link']  ,
+                        "last_synced_at": timezone.now(),
+                })
             return Response({
                 'success': True,
                 'folder_id': final_folder_id,
@@ -275,8 +291,14 @@ class FileDocumentUpload(APIView):
         """
         Sube archivo directamente a Google Drive
         """
-        # ✅ SINGLETON - misma instancia para todos los requests
-        google_drive = GoogleDriveService()  # ¡Siempre devuelve la misma instancia!
+        area_id=request.data.get('area_id')
+        
+        logger.error(f"***********************************")
+        print ('AREA')
+        logger.error(f"area {area_id}")
+        area = Area.objects.get(id=area_id)
+
+        google_drive = GoogleDriveService()  
         
         # Validar archivo
         uploaded_file = request.FILES.get('file')
@@ -323,8 +345,11 @@ class FileDocumentUpload(APIView):
             
             # Subir archivo
             import io
-            file_obj = io.BytesIO(uploaded_file.read())
+            file_obj = io.BytesIO(uploaded_file.read()) 
             
+            # .read() Lee todo el contenido del archivo y devuelve bytes
+            # io.BytesIO(...) Crea un archivo virtual en memoria con esos bytes
+
             drive_file = google_drive.upload_file(
                 file_obj=file_obj,
                 filename=uploaded_file.name,
@@ -332,8 +357,36 @@ class FileDocumentUpload(APIView):
                 mime_type=uploaded_file.content_type,
                 chunk_size=10 * 1024 * 1024
             )
-            
+
+        except Exception as e:
+            logger.error(f"Error en upload: {str(e)}", exc_info=True)
             return Response({
+                'error': f'Error al subir archivo: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+        try:
+                parent_obj = None
+                if final_parent_id:
+                    parent_obj = GoogleDriveFile.objects.filter(drive_file_id=drive_file["parent_folder_id"]).first()
+                logger.info(f"parent obj: {parent_obj}")
+                GoogleDriveFile.objects.update_or_create(
+                    drive_file_id=drive_file['file_id'],
+                    defaults={
+                        "area": area,
+                        "name": drive_file['name'],
+                        "mime_type": drive_file['mime_type'] ,
+                        "parent_drive_file_id": parent_obj,  # Django ORM acepta instancia para ForeignKey
+                        "drive_web_view_link": drive_file['web_view_link']  ,
+                        "last_synced_at": timezone.now(),
+                })
+
+        except Exception as e:
+                logger.error(f"Error grabando registro GoogleDriveFile: {e}")    
+                return Response({
+                'error': f'Error grabando registro file: {str(e)}'
+                } , status=status.HTTP_500_INTERNAL_SERVER_ERROR)  
+          
+        return Response({
                 'success': True,
                 'message': 'Archivo subido exitosamente',
                 'file': {
@@ -342,17 +395,92 @@ class FileDocumentUpload(APIView):
                     'web_link': drive_file['web_view_link'],
                     'drive_id': drive_file['file_id']
                 }
-            }, status=status.HTTP_201_CREATED)
+        }, status=status.HTTP_201_CREATED)
             
+
+class FileDocumentDelete(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def post(self,request):
+        drive_file_id = request.data.get('drive_file_id')
+        
+      
+        if not  drive_file_id:
+             return Response({
+                  'error':'drive_file_id requerido',
+                  'detail':'proporcione drive_file_id del archivo a eliminar'
+             },status=status.HTTP_400_BAD_REQUEST)
+      
+        # Verificar si existe en BD antes de eliminar
+        try:
+            file_record = GoogleDriveFile.objects.filter(drive_file_id=drive_file_id).first()
+            if not file_record:
+                return Response({
+                    'error': f'Archivo con ID {drive_file_id} no encontrado en la base de datos',
+                    'detail': 'Verifique que el ID sea correcto'
+                }, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            logger.error(f"Error en upload: {str(e)}", exc_info=True)
+                logger.error(f"Error verificando archivo en BD (file id: {drive_file_id} ): {e}")
+                return Response({
+                    'error': 'Error verificando el archivo en la base de datos (file id: '+str(drive_file_id)+' )'
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        google_drive = GoogleDriveService() 
+        try:
+            if not google_drive.delete_file(drive_file_id):
+                return Response({
+                    'error': 'No se pudo eliminar el archivo de Google Drive',
+                    'detail': 'El archivo id:'+str(drive_file_id)+' podría no existir en Google Drive o no tener permisos'
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            logger.error(f"Error en Google Drive: {e}")
             return Response({
-                'error': f'Error al subir archivo: {str(e)}'
+                'error': f'Error en Google Drive: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+        # Eliminar de la base de datos
+        try:
+              
+            with transaction.atomic():
+                deleted_count, _ = GoogleDriveFile.objects.filter(
+                    drive_file_id=drive_file_id
+                ).delete()
+                
+                if deleted_count == 0:
+                    logger.warning(f"No se encontró archivo para eliminar: {drive_file_id}")
+                    return Response({
+                        'warning': 'El archivo no existía en la base de datos'
+                    }, status=status.HTTP_404_NOT_FOUND)
+                
+                logger.info(f"✅ Archivo eliminado de BD:  ({drive_file_id})")
+                
+                # ✅ RETORNAR 200 OK, NO 500
+                return Response({
+                    'success': True,
+                    'message': f'Archivo eliminado exitosamente',
+                     
+                    'drive_file_id': drive_file_id,
+                    'deleted_count': deleted_count
+                }, status=status.HTTP_200_OK)  # ✅ Código 200 para éxito
+                
+        except Exception as e:
+            logger.error(f"Error en base de datos: {e}")
+            return Response({
+                'error': f'Error en base de datos: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-
+        except Exception as e:
+            logger.error(f"Error en base de datos: {e}")
+            # Nota: En este punto el archivo ya se eliminó de Google Drive
+            # pero falló la BD, necesitas manejar esta inconsistencia
+            return Response({
+                'error': 'Error en base de datos, pero el archivo fue eliminado de Google Drive',
+                'detail': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+ 
 class deprec_FileDocumentUpload(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]

@@ -275,7 +275,15 @@ class GoogleDriveService:
             self._folder_cache[cache_key] = current_parent
             logger.info(f"💾 CACHÉ GUARDADO: '{relative_path}' -> {current_parent}")
         
-        return current_parent
+      
+        return {
+                'file_id': current_parent,
+                'name': folder_name,
+                'size': 0,
+                'mime_type': 'application/vnd.google-apps.folder',
+                'web_view_link':'', 
+                'parent_folder_id':parent_folder_id
+            }
     
     def clear_cache(self):
         """✅ Limpia la caché de carpetas"""
@@ -368,7 +376,7 @@ class GoogleDriveService:
                 supportsAllDrives=True
             ).execute()
             
-            logger.info(f"? Archivo subido a Google Drive: {filename} (ID: {uploaded_file.get('id')} parent folder{parent_folder_id})")
+            logger.info(f"? Archivo subido a Google Drive: {filename} (ID: {uploaded_file.get('id')} parent folder:{parent_folder_id})")
             
             return {
                 'file_id': uploaded_file.get('id'),
@@ -376,7 +384,8 @@ class GoogleDriveService:
                 'size': uploaded_file.get('size'),
                 'mime_type': uploaded_file.get('mimeType'),
                 'web_view_link': uploaded_file.get('webViewLink'),
-                'created_time': uploaded_file.get('createdTime')
+                'created_time': uploaded_file.get('createdTime'),
+                'parent_folder_id':parent_folder_id
             }
             
         except HttpError as error:
@@ -396,11 +405,30 @@ class GoogleDriveService:
     
     def delete_file(self, file_id: str):
         """Elimina un archivo de Google Drive"""
+   
+        if not file_id:
+                logger.error("❌ file_id vacío")
+                return False
+        
+
+ 
+
+ 
+ 
         try:
-            self.service.files().delete(fileId=file_id).execute()
-            logger.info(f"? Archivo eliminado de Google Drive: {file_id}")
-            return True
+             logger.info(f"Eliminando archivo de Drive: {file_id}")
+             self.service.files().delete(fileId=file_id, supportsAllDrives=True ).execute()
+             logger.info(f"✅ Archivo eliminado de Google Drive: {file_id}")
+             return True
+           
+                
         except HttpError as error:
-            logger.error(f"? Error eliminando archivo {file_id}: {error}")
-            return False   
-  
+            if error.resp.status == 404:
+                logger.warning(f"⚠️ Archivo no encontrado en Google Drive: {file_id}")
+                # Considerar como éxito si ya no existe en Drive
+                return True
+            logger.error(f"❌ Error eliminando archivo {file_id}: {error}")
+            return False
+        except Exception as error:
+            logger.error(f"❌ Error inesperado eliminando {file_id}: {error}")
+            return False

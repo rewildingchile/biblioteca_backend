@@ -109,6 +109,7 @@ def sync_full(
             root_modified_dt = datetime.fromisoformat(root_modified.replace("Z", "+00:00"))
         else:
             root_modified_dt = timezone.now()
+            
         root_web_link = root_metadata.get("webViewLink")
 
         root_obj, root_created = GoogleDriveFile.objects.update_or_create(
@@ -456,6 +457,7 @@ logger = logging.getLogger(__name__)
 
 @transaction.atomic
 def sync_changes(service, folder_id, area):
+    
     # 1. Obtener o crear el estado de sincronización
     state, _ = GoogleDriveSyncState.objects.get_or_create(area=area)
     token = state.start_page_token

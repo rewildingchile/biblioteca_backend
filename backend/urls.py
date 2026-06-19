@@ -24,7 +24,7 @@ from googledrive.views import SyncFullView
 from googledrive.views import DriveSyncStatusView
 from googledrive.views import DriveTreeView
 from googledrive.views import SyncChangesView 
-from googledrive.views import FileDocumentView , FileDocumentContentView, FileDocumentUpload,PrepareUploadView
+from googledrive.views import FileDocumentView , FileDocumentContentView, FileDocumentUpload,PrepareUploadView, FileDocumentDelete
 from  .views import M2mTokenView, Test 
 from logging_conf.views import ver_activity_log, ver_importlibromayor_log
 
@@ -39,8 +39,8 @@ urlpatterns = [
     path('api/v1/generatebackupcodes/',GenerateBackupCodesView.as_view(),name="GenerateBackupCodesView"),
     path('api/v1/token/refresh/', RefreshTokenView.as_view(), name='token-refresh'),
     path("api/v1/filedocument/",  FileDocumentView.as_view()),
-    path('api/v1/drive/syncfull/', SyncFullView.as_view()) ,
-    path('api/v1/drive/syncchanges/', SyncChangesView.as_view()) ,
+    path('api/v1/drive/syncfull/<int:area_id>/', SyncFullView.as_view()) ,
+    path('api/v1/drive/syncchanges/<int:area_id>/', SyncChangesView.as_view()) ,
     path('api/v1/drive/sync/status/<str:task_id>/', DriveSyncStatusView.as_view()),
     path("drive/tree/<int:area_id>/",DriveTreeView.as_view()),
     path("api/v1/auth/m2m-token",M2mTokenView.as_view()),
@@ -48,4 +48,5 @@ urlpatterns = [
     path("api/v1/filedocument/content/", FileDocumentContentView.as_view()  ),
     path("api/v1/upload/",FileDocumentUpload.as_view()),
     path('api/v1/prepare-upload/', PrepareUploadView.as_view(), name='prepare-upload'), 
+    path("api/v1/deletefile/",FileDocumentDelete.as_view()),
 ]

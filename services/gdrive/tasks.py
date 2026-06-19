@@ -14,7 +14,16 @@ def sync_full_task(self,area_id):
         logger.info( f" {logger.name} --> Iniciando tarea fulldrive_task")
         service = conectar_drive()
      
-        folder_id = "1fQmuOcRH4E5KEM2S3NXQSJwVK_1U02zD"
+        FOLDER_IDS = {
+                1: "1fQmuOcRH4E5KEM2S3NXQSJwVK_1U02zD",
+                2: "16j0klxJnQspJ1mvafpnMaRx7Xd1SRIDO",
+        }
+
+        folder_id = FOLDER_IDS.get(area_id)
+
+        if not folder_id:
+                raise ValueError(f"Área no soportada: {area_id}")
+
         area = Area.objects.get(id=area_id)
         try:
                 sync_full( service, folder_id, area )

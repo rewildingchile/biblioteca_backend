@@ -404,6 +404,33 @@ class GoogleDriveService:
             return None
     
     def delete_file(self, file_id: str):
+        """Mueve el archivo a la papelera (no lo elimina definitivamente)"""
+        try:
+            # Como no podemos eliminar, lo movemos a la papelera
+            file_metadata = {
+                'trashed': True  # Mover a papelera
+            }
+            
+            self.service.files().update(
+                fileId=file_id,
+                body=file_metadata,
+                supportsAllDrives=True
+            ).execute()
+            
+            logger.info(f"📦 Archivo movido a papelera: {file_id}")
+            return True
+            
+        except HttpError as error:
+            if error.resp.status == 404:
+                logger.warning(f"⚠️ Archivo no encontrado: {file_id}")
+                return True
+            elif error.resp.status == 403:
+                logger.error(f"❌ Sin permisos para mover a papelera: {file_id}")
+                return False
+            logger.error(f"❌ Error moviendo a papelera {file_id}: {error}")
+            return False
+
+    def deprec_delete_file(self, file_id: str):
         """Elimina un archivo de Google Drive"""
    
         if not file_id:
@@ -411,13 +438,59 @@ class GoogleDriveService:
                 return False
         
 
- 
+        # Primero verificar si el archivo existe y obtener información
+        try:
+            file_metadata = self.service.files().get(
+                fileId=file_id,
+                  supportsAllDrives=True,
+                fields='id, name, trashed, parents, mimeType'
+            ).execute()
+            
+            logger.info(f"📄 Archivo encontrado: {file_metadata.get('name')}")
+            logger.info(f"   - ID: {file_metadata.get('id')}")
+            logger.info(f"   - En papelera: {file_metadata.get('trashed', False)}")
+            logger.info(f"   - MIME: {file_metadata.get('mimeType')}")
 
- 
+            
+            file_info = self.service.files().get(
+                fileId=file_id,
+                supportsAllDrives=True,
+                fields='id, name, capabilities, owners, permissions'
+            ).execute()
+            
+            logger.info(f"📄 Archivo: {file_info.get('name')}")
+            logger.info(f"🔐 Capabilities: {file_info.get('capabilities', {})}")
+            
+            # Verificar si tiene permiso de eliminación
+            can_delete = file_info.get('capabilities', {}).get('canDelete', False)
+            logger.info(f"🗑️ ¿Puede eliminar? {can_delete}")
+            
+            if not can_delete:
+                logger.error("❌ No tiene permisos para eliminar este archivo")
+                return False
+
+        except HttpError as error:
+            if error.resp.status == 404:
+                logger.error(f"❌ Archivo no encontrado con GET: {file_id}")
+                # Intentar con supportsAllDrives
+                try:
+                    file_metadata = self.service.files().get(
+                        fileId=file_id,
+                        supportsAllDrives=True,
+                        fields='id, name'
+                    ).execute()
+                    logger.info(f"✅ Archivo encontrado con supportsAllDrives: {file_metadata.get('name')}")
+                except HttpError as e:
+                    logger.error(f"❌ Error con supportsAllDrives: {e}")
+                    return False
+            else:
+                logger.error(f"❌ Error obteniendo archivo {file_id}: {error}")
+                return False
  
         try:
              logger.info(f"Eliminando archivo de Drive: {file_id}")
-             self.service.files().delete(fileId=file_id, supportsAllDrives=True ).execute()
+             self.service.files().delete(fileId=file_id, 
+                                         supportsAllDrives=True ).execute()
              logger.info(f"✅ Archivo eliminado de Google Drive: {file_id}")
              return True
            
@@ -426,7 +499,7 @@ class GoogleDriveService:
             if error.resp.status == 404:
                 logger.warning(f"⚠️ Archivo no encontrado en Google Drive: {file_id}")
                 # Considerar como éxito si ya no existe en Drive
-                return True
+                return False
             logger.error(f"❌ Error eliminando archivo {file_id}: {error}")
             return False
         except Exception as error:

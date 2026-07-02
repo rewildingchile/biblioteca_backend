@@ -27,8 +27,12 @@ from django.utils import timezone
 from django.db import transaction
 from googleapiclient.discovery import build
 
-import logging
 
+import base64
+import mimetypes
+
+
+import logging
 logger = logging.getLogger(__name__)
 
 
@@ -159,12 +163,10 @@ class FileDocumentView(APIView):
             return Response({"status":404})
         
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
+ 
+from services.gdrive.tree_service import obtener_arbol_area, obtener_arbol_subfolder
 
-from services.gdrive.tree_service import obtener_arbol_area
+
 import os
 
 class DriveTreeView(APIView):
@@ -179,8 +181,24 @@ class DriveTreeView(APIView):
 
         return Response(tree)    
     
+class DriveTreeFolderView(APIView):    
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request,folder_id):
+        tree = obtener_arbol_subfolder(folder_id)
+        return Response(tree)    
+    
+from services.gdrive.search import buscar_tokens,search_google_drive_files_ranked,GoogleDriveSearchService    
+class  SearchView (APIView):
 
-
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        tokens = request.data.get('tokens')
+        #result = buscar_tokens(tokens)
+        result=search_google_drive_files_ranked(tokens)
+        #result = GoogleDriveSearchService.execute_as_json_ready(tokens)
+        return  result   
     
 class FileDocumentContentView(APIView):
     authentication_classes = [JWTAuthentication]
@@ -219,7 +237,42 @@ class FileDocumentContentView(APIView):
                 
             }, status=status.HTTP_200_OK)
     
-# views.py
+class FileDocumentDescriptionView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+            
+        file_id = request.data.get('file_id')
+        description = request.data.get('description')
+        
+        if not file_id or not description:
+            return Response(
+                {"error": "file_id y descrip son requeridos"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        try:
+            obj, created = GoogleDriveFileDocument.objects.update_or_create(
+                file_id=file_id,
+                defaults={
+                    "description": description,
+                },
+            )
+            if created:
+                logger.debug(f"Nuevo: {file_id}  ")
+            else:
+                logger.debug(f"Actualizado: {file_id}  ")
+
+           
+
+        except Exception as e:
+            logger.exception(f"Error guardando {file_id} : {e}")
+
+
+        return Response({
+                "status": 200,
+                "message": "hola!",
+                
+            }, status=status.HTTP_200_OK)
 
 class PrepareUploadView(APIView):
     """
@@ -480,7 +533,67 @@ class FileDocumentDelete(APIView):
                 'error': 'Error en base de datos, pero el archivo fue eliminado de Google Drive',
                 'detail': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
- 
+
+
+
+class ViewDriveFileView(APIView):
+    """
+    Obtiene un archivo de Google Drive para visualización
+    """
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, file_id):
+        try:
+            google_drive = GoogleDriveService()
+            
+            # Obtener metadata del archivo
+            file_metadata = google_drive.service.files().get(
+                fileId=file_id,
+                fields='id, name, mimeType, size',
+                supportsAllDrives=True
+            ).execute()
+            
+            # Verificar que sea PDF
+            if file_metadata.get('mimeType') != 'application/pdf':
+                return Response(
+                    {'error': 'El archivo no es un PDF'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Descargar el archivo
+            request_download = google_drive.service.files().get_media(
+                fileId=file_id,
+                supportsAllDrives=True
+            )
+            
+            # Leer el contenido
+            file_content = request_download.execute()
+            
+            # Convertir a base64 para enviar al frontend
+            file_base64 = base64.b64encode(file_content).decode('utf-8')
+            
+            return Response({
+                'success': True,
+                'file': {
+                    'id': file_metadata.get('id'),
+                    'name': file_metadata.get('name'),
+                    'mime_type': file_metadata.get('mimeType'),
+                    'size': file_metadata.get('size'),
+                    'content': file_base64,
+                    'content_type': 'application/pdf'
+                }
+            })
+            
+        except Exception as e:
+            logger.error(f"Error obteniendo archivo {file_id}: {str(e)}")
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+
 class deprec_FileDocumentUpload(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]

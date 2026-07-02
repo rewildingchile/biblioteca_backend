@@ -1,0 +1,259 @@
+
+-------------------------------------------------------------------------------
+   ROBOCOPY     ::     Herramienta para copia eficaz de archivos         
+-------------------------------------------------------------------------------
+
+  Iniciado : lunes, 22 de junio de 2026 15:42:01
+   Origen : \\192.168.100.60\servidor_documentos\
+     Destino : C:\Users\admin\OneDrive\Escritorio\documentos_servidor\
+
+    Archivos: *.*
+	    
+  Opciones: *.* /TEE /S /E /DCOPY:DA /COPY:DAT /Z /IT /MT:16 /R:0 /W:5 
+
+------------------------------------------------------------------------------
+
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\A¤o 2026\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\Boletas Honorarios 2026\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\Comprobantes 2026\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\Contratos-Escrituras\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\Facturas Compras 2026\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\Grant y Reportes\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\Procedimientos\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\Proyectos_Cap Investment\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\3. Proyectos_Cap Investment\1. CEV Pumalin_Terminado\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\3. Proyectos_Cap Investment\10. Dise¤o Infraestructura CF Terminado\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\3. Proyectos_Cap Investment\11. Oportunidades Infraestructura Terminado\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\3. Proyectos_Cap Investment\13. CEV PNP_Terminado\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\3. Proyectos_Cap Investment\14. Cercos Canquen Colorado Terminado\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\3. Proyectos_Cap Investment\2. Centro Rescate del Huemul\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\3. Proyectos_Cap Investment\4. Senderos Butler Conservation_Terminado\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\3. Proyectos_Cap Investment\5. Mejoras Puestos Nancy Schaub_Terminado\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\3. Proyectos_Cap Investment\6. Encierro Condores_Terminado\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\3. Proyectos_Cap Investment\7. Jaulas Jabalis_Terminado\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\3. Proyectos_Cap Investment\8. Infraestructura Conaf Pumalin_Terminado\
+	  *Archivo EXTRA		   35455	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\3. Proyectos_Cap Investment\15. Ejec pptaria equipamiento carry over.xlsx
+	  *Archivo EXTRA		   63757	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\2026 - 2030 USD v2.xlsx
+	  *Archivo EXTRA		   63773	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\2026 - 2030 USD.xlsx
+	  *Archivo EXTRA		   2.7 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Fiscal Sponsorship Agreement TC Oct 2020.pdf
+	  *Archivo EXTRA		   32561	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\INFORMATION_REQUEST_FOR_CONTRACTS PROJECTS_gb.docx
+	  *Archivo EXTRA		  832822	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\INFORMATION_REQUEST_FOR_CONTRACTS PROJECTS_gb.pdf
+	  *Archivo EXTRA		  236116	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Informe Mazars - Sobre Inversiones Fundaci¢n Rewilding 12012023.pdf
+
+	  *Archivo EXTRA		  249751		*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Memorandum Donaciones FINAL020824.pdfC:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Compraventa propiedades\
+	  *Archivo EXTRA		   34721	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Payment request form.docx
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Poderes\
+	  *Archivo EXTRA		   80280	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Payment request form.pdf
+
+	  *Archivo EXTRA		   51995		*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\3. Proyectos_Cap Investment\17. Apoyo Mant Conaf Pumalin\Plan de accioïn Revisado propuesta.xlsxC:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Boletas Honorarios 2026\RC\Enero 2026\
+	  *Archivo EXTRA		   45280	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\3. Proyectos_Cap Investment\9. Infraestructura Las Horquetas\9. Presupuesto Infraestructura Las Horquetas Gral Antiguo.xlsx
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Traspaso Propiedades 08.2023\
+
+	*Directorio EXTRA      -1		*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\Abril 2026\C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\Abril 2026\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\01 Enero 2026\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Boletas Honorarios 2026\RC\Febrero 2026\
+	  *Archivo EXTRA		   1.8 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Cambio nombre a Fundacion Tompkins Conservation Chile SII 06.08.2018.pdf
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\Enero 2026\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\Enero 2026\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\02 Febrero 2026\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Boletas Honorarios 2026\RC\Marzo 2026\
+	  *Archivo EXTRA		   47643	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Cambio uso sueldo Oficina Centenario.pdf
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\Febrero 2026\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\Febrero 2026\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\03 Marzo 2026\
+	  *Archivo EXTRA		   25044	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. A¤o 2026\Nomina de Proveedores\Detalle pagos 04.06.2026.xlsx
+	  *Archivo EXTRA		  693572	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Carta Complementacion Oferta Donacion_23.08.24.pdf
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\Marzo 2026\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\Marzo 2026\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\04 Abril 2026\
+	  *Archivo EXTRA		   22808	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. A¤o 2026\Nomina de Proveedores\Detalle pagos 11.06.2026.xlsx
+	  *Archivo EXTRA		   3.4 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Carta ingreso anteced. donacion_23.08.24.pdf
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\Mayo 2026\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\Mayo 2026\
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\05 Mayo 2026\
+	  *Archivo EXTRA		   1.8 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Carta Oferta Donacion_CF_04.06.24.pdf
+	  *Archivo EXTRA		   24870	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Comprobante SII cambio nombre F Rewilding Chile 07.07.2021.pdf
+	  *Archivo EXTRA		   27256	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Comprobante Solicitud Cambio uso sueldo Oficina Centenario.pdf
+	  *Archivo EXTRA		   1.5 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Contrato de Proyecto FY Universidad Austral.pdf
+	  *Archivo EXTRA		   20989	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\contrato programam aire libre ok2 01.10.19.docx
+	  *Archivo EXTRA		  547380	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Certificados de Donacion\Certificado Donacion Nø006 Andes Viva SPA.pdf
+	  *Archivo EXTRA		   23023	
+	  *Archivo EXTRA		   48078	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. A¤o 2026\Contraloria\2. Informes 5-15\20 Informe Semanal 08 al 12 de Junio 2026.docxC:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\ContratoPrestacioïnServiciosADMAPU260919VF 30.09.19.docx
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\CAPP\
+	  *Archivo EXTRA		  485189	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Certificados de Donacion\Certificado Donacion Nø007 Andbeyond Chile SPA.pdf
+	  *Archivo EXTRA		   7.0 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Donacion Modal CF 2025-11-11 16-36.pdf
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Robbins Family Foundation\
+	  *Archivo EXTRA		  476818	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Certificados de Donacion\Certificado Donacion Nø008 Vi¤a Cono Sur S.A..pdf
+	  *Archivo EXTRA		   8.8 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Estatutos Actualizados Rewilding Chile 19.03.2024.pdf
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Vi¤a Cono Sur\
+	  *Archivo EXTRA		  449049	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Certificados de Donacion\Certificado Donacion Nø009 Andes Viva SPA.pdf
+
+	  *Archivo EXTRA		   1.2 m		  *Archivo EXTRA		  273516	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. A¤o 2026\Directorio 2026\3. Comite Finanzas 17.06.2026\Reporte Rewilding - 15 Jun 2026 BTG.pdfC:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. A¤o 2026\Budget 2026\3. Budget 2026-2030 + Financiamiento\Budget 2026 + Financiamiento 2 version.xlsx
+	  *Archivo EXTRA		   71680	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Junta Extraordinaria Fundaci¢n RW Chile 23.12.21.doc
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Weeden\
+	  *Archivo EXTRA		  452821	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Certificados de Donacion\Certificado Donacion Nø010 Patagon Chile SPA.pdf
+	  *Archivo EXTRA		   47643	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Modificacion Destino Bien Raiz (Oficina Centenario).pdf
+	  *Archivo EXTRA		  262403	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\07.07.2022 RC_Disbursement Letter USD 12.500 - Deutsche Bank.pdf
+	  *Archivo EXTRA		  461752	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Certificados de Donacion\Certificado Donacion Nø011 Travel CoachChile SPA.pdf
+	  *Archivo EXTRA		  296471	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Patente Definitiva Oficina Centenario.pdf
+	  *Archivo EXTRA		   13051	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Reporte Corredor Huemul 2022.xlsx
+	  *Archivo EXTRA		  443673	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Certificados de Donacion\Certificado Donacion Nø012 Andes Viva SPA.pdf
+	  *Archivo EXTRA		   16284	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\PROPUESTA ECONOMICA    30.09.19.xlsx
+	  *Archivo EXTRA		  454673	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Certificados de Donacion\Certificado Donacion Nø013 Vi¤a Cono Sur S.A..pdf
+	  *Archivo EXTRA		   4.0 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Protocolo de Acuerdo PN Cabo Froward Firmado_28_03_2024.pdf
+	  *Archivo EXTRA		   5.4 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Reduccioïn 14.06.2022 1951-2022 (personeria CME PPG).pdf
+	    Nuevo arch		   98787	\\192.168.100.60\servidor_documentos\2. Grant y Reportes\Glosario Donaciones.docx  0%   98%  
+	  *Archivo EXTRA		     165	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. A¤o 2026\Personal 2026\Estadisticas Equipo Vida Silvestre 2026\~$06 Estad¡stica de sueldos Junio 2026 (Vida Silvestre).xlsx
+	  *Archivo EXTRA		  416835	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Boletas Honorarios 2026\RC\5. Mayo 2026\26.05.157.pdf100%  
+	    Nuevo arch		   1.5 m	\\192.168.100.60\servidor_documentos\2. Grant y Reportes\ReWild 501c3 Affirmation Letter 2022-08-08.pdf 20%  
+	  *Archivo EXTRA		   60700	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\3. Marzo 2026\E-67 RC Marzo 19.03.2026 $90.615.-LA.pdf
+	  *Archivo EXTRA		  128295	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\4. Abril 2026\E-74 RC Abril 07.04.2026 $3.900.000.-LA.pdf
+	  *Archivo EXTRA		   55002	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\3. Marzo 2026\E-73 RC Marzo 31.03.2026 $37.815.-LA.pdf
+	  *Archivo EXTRA		  385454	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\4. Abril 2026\E-75 RC Abril 09.04.2026 $47.943.-LA.pdf
+	  *Archivo EXTRA		   2.0 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\4. Abril 2026\E-80 RC Abril 09.04.2026 $3.475.524.-LA.pdf
+	  *Archivo EXTRA		   98422	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\4. Abril 2026\E-82 RC Abril 13.04.2026 $3.200.000.000.-LA.pdf
+	  *Archivo EXTRA		   99223	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\4. Abril 2026\E-83 RC Abril 13.04.2026 $452.737.179.-LA.pdf
+	  *Archivo EXTRA		   99219	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\4. Abril 2026\E-84 RC Abril 13.04.2026 $706.960.615.-LA.pdf
+	  *Archivo EXTRA		   99232	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\4. Abril 2026\E-85 RC Abril 13.04.2026 $360.336.083.-LA.pdf
+
+	  *Archivo EXTRA		  297163		  *Archivo EXTRA		  441539	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\6. Junio 2026\E-123 RC Junio 09.06.2026 $2.721.871.-LA.pdfC:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\5. Mayo 2026\E-100 RC Mayo 07.05.2026 $3.900.000.-LA.pdf
+	  *Archivo EXTRA		  250021	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\4. Abril 2026\E-86 RC Abril 13.04.2026 $320.981.-LA.pdf
+	  *Archivo EXTRA		   2.8 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\1. Enero 2026\I-4 TC Enero 08.01.2026 $117.135.000.- falta grant (Agregado).pdf
+	  *Archivo EXTRA		  717544	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\5. Mayo 2026\E-101 RC Mayo 12.05.2026 $38.449.767.-.pdf
+	  *Archivo EXTRA		  311238	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\2. Febrero 2026\I-17 TC Febrero 10.02.2026 $21.356.250.-.pdf
+	  *Archivo EXTRA		  576985	
+C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\4. Abril 2026\E-89 RC Abril 20.04.2026 $194.640.-LA.pdf	  *Archivo EXTRA		  355733	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\3. Marzo 2026\I-23 TC Marzo 05.03.2026 $246.534.- falta detalle (Agregado).pdf
+	  *Archivo EXTRA		  338704	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\1. Enero 2026\I-8 TC Enero 20.01.2026 $550.000.- falta comprobante banco (Agregado).pdf
+	  *Archivo EXTRA		  447606	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\5. Mayo 2026\E-104 RC Mayo 11.05.2026 $1.197.231.-LA.pdf
+	  *Archivo EXTRA		   71615	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\2. Febrero 2026\I-22 TC Febrero 23.02.2026 $19.450.-LA.pdf
+	  *Archivo EXTRA		  281805	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\4. Abril 2026\E-93 RC Abril 29.04.2026 $390.231.-LA.pdf
+	  *Archivo EXTRA		  386253	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-39 TC Abril 02.04.2026 $4.820.159.-.pdf
+	  *Archivo EXTRA		  288230	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\3. Marzo 2026\I-23 TC Marzo 05.03.2026 $246.534.-LA.pdf
+	  *Archivo EXTRA		   1.8 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\5. Mayo 2026\E-104 RC Mayo 11.05.2026 $8.587.087.-.pdf
+
+	  *Archivo EXTRA		  628981		  *Archivo EXTRA		  643865	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-60 TC Mayo 04.05.2026 $10.000.000.-LA.pdfC:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\2. Febrero 2026\I-24 TC Febrero 28.02.2026 $11.002.407.-LA.pdf
+	  *Archivo EXTRA		  667215	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\4. Abril 2026\E-95 RC Abril 30.04.2026 $10.395.269.-LA.pdf
+	  *Archivo EXTRA		  386253	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-39 TC Abril 02.04.2026 $4.820.159.-LA.pdf
+	  *Archivo EXTRA		  623551	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\3. Marzo 2026\I-32 TC Marzo 16.03.2026 $120.000.- falta comprobante banco (Agregado).pdf
+	  *Archivo EXTRA		   1.8 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\5. Mayo 2026\E-104 RC Mayo 11.05.2026 $8.587.087.-LA.pdf
+	  *Archivo EXTRA		  382935	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-61 TC Mayo 07.05.2026 $11.968.386.-LA.pdf
+	  *Archivo EXTRA		  136011	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\4. Abril 2026\E-96 RC Abril 30.04.2026 $909.669.-LA.pdf
+	  *Archivo EXTRA		  491430	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-40 TC Abril 06.04.2026 $239.892.833.-LA.pdf
+	  *Archivo EXTRA		   70512	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\6. Junio 2026\I-81 TC Junio 01.06.2026 $17.433.-LA.pdf
+	  *Archivo EXTRA		  417714	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\3. Marzo 2026\I-34 TC Marzo 23.03.2026 $228.457.500.- falta grant (Agregado).pdf
+	  *Archivo EXTRA		  536733	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\5. Mayo 2026\E-105 RC Mayo 13.05.2026 $214.775.-LA.pdf
+	  *Archivo EXTRA		   46136	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-62 TC Mayo 07.05.2026 $399.330.000.-LA.pdf
+	  *Archivo EXTRA		  136012	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\4. Abril 2026\E-97 RC Abril 30.04.2026 $1.945.108.-LA.pdf
+ 99%  	  *Archivo EXTRA		   94460	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-41 TC Abril 06.04.2026 $15.720.-LA.pdf
+	  *Archivo EXTRA		   46161	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\6. Junio 2026\I-82 TC Junio 04.06.2026 $209.855.000.-LA.pdf
+	  *Archivo EXTRA		  416254	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\3. Marzo 2026\I-34 TC Marzo 23.03.2026 $228.457.500.-LA.pdf
+	  *Archivo EXTRA		   98409	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\5. Mayo 2026\E-107 RC Mayo 14.05.2026 $3.300.000.000.-LA.pdf
+	  *Archivo EXTRA		   1.0 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-63 TC Mayo 11.05.2026 $3.742.384.-.pdf
+	  *Archivo EXTRA		  194116	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\4. Abril 2026\E-98 RC Abril 30.04.2026 $1.923.732.-LA.pdf
+	  *Archivo EXTRA		  146226	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-42 TC Abril 06.04.2026 $4.323.-LA.pdf
+	  *Archivo EXTRA		  223977	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\4. Abril 2026\T-467 RC Abril 28.04.2026 $34.834.-.pdf
+	  *Archivo EXTRA		  324169	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\6. Junio 2026\I-83 TC Junio 10.06.2026 $4.639.993.-LA falta certificado.pdf
+	  *Archivo EXTRA		   1.1 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\5. Mayo 2026\T-516 RC Mayo 07.05.2026 $140.299.- VV.pdf
+	  *Archivo EXTRA		   1.3 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\6. Junio 2026\T-655 RC Junio 03.06.2026 $363.249.-VV falta respaldo(Agregado).pdf
+	  *Archivo EXTRA		  459922	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\3. Marzo 2026\I-35 TC Marzo 24.03.2026 $228.788.-falta comprobante banco (Ingresado).pdf
+	  *Archivo EXTRA		   99218	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\5. Mayo 2026\E-108 RC Mayo 14.05.2026 $361.849.495.-LA.pdf
+	  *Archivo EXTRA		     165	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. A¤o 2026\Contraloria\7. Revisi¢n Comprobantes\Traspasos 2026\~$6. Libro diario Junio 2026.xlsx
+	  *Archivo EXTRA		  399585	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-63 TC Mayo 11.05.2026 $3.742.384.-LA.pdf100%  
+	    Nuevo arch		  320571	\\192.168.100.60\servidor_documentos\1. Facturas Compras 2026\RC\06. Junio 2026\26.06.120.pdf
+	  *Archivo EXTRA		  190696	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\4. Abril 2026\E-99 RC Abril 30.04.2026 $902.377.-LA.pdf
+	  *Archivo EXTRA		  190589	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-43 TC Abril 08.04.2026 $44.002.-LA.pdf
+	  *Archivo EXTRA		   7.0 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\4. Abril 2026\T-487 RC Abril 30.04.2026 $680.191.-.pdf
+	  *Archivo EXTRA		   1.0 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\6. Junio 2026\I-84 TC Junio 11.06.2026 $1.224.250.000.-LA falta grant agreement.pdf
+	  *Archivo EXTRA		  393606	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\5. Mayo 2026\T-518 RC Mayo 07.05.2026 $753.619.- VV.pdf
+	  *Archivo EXTRA		    9041	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\6. Junio 2026\T-655 RC Junio 03.06.2026 $363.249.-VV falta respaldo.pdf
+	  *Archivo EXTRA		  150860	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\3. Marzo 2026\I-35 TC Marzo 24.03.2026 $228.788.-LA.pdf
+	  *Archivo EXTRA		   99217	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\5. Mayo 2026\E-109 RC Mayo 14.05.2026 $454.638.675.-LA.pdf
+	  *Archivo EXTRA		  100008	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-66 TC Mayo 13.05.2026 $46.355.-LA.pdf
+	  *Archivo EXTRA		  153217	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-67 TC Mayo 13.05.2026 $3.213.440.000.-LA.pdf
+	  *Archivo EXTRA		  141648	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-44 TC Abril 08.04.2026 $135.037.-LA.pdf
+	  *Archivo EXTRA		     165	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Art to Acres (Halley Mellin)\~$Rendicion total CF 2025 Art into Acres.xlsx
+	  *Archivo EXTRA		   74130	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\5. Mayo 2026\T-519 RC Mayo 07.05.2026 $180.000.- VV.pdf
+	  *Archivo EXTRA		    9041	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\6. Junio 2026\T-655 RC Junio 03.06.2026 $363.249.-VV.pdf
+	  *Archivo EXTRA		  429703	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Ecological Restoration Fund (Dan Hotz)\2024 Detalle Reporte ERF 30.04.2024.xlsx
+	  *Archivo EXTRA		   34721	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Explorer Club\Payment request form.docx
+	  *Archivo EXTRA		  120760	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\3. Marzo 2026\I-36 TC Marzo 25.03.2026 $63.884.-LA.pdf100%  
+	    Nuevo arch		  322301	\\192.168.100.60\servidor_documentos\1. Facturas Compras 2026\RC\06. Junio 2026\26.06.121.pdf
+	  *Archivo EXTRA		  152522	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-68 TC Mayo 13.05.2026 $454.638.675.-LA.pdf
+	  *Archivo EXTRA		  521998	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-45 TC Abril 10.04.2026 $33.978.460.-.pdf
+	  *Archivo EXTRA		     165	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Art to Acres (Halley Mellin)\~$Reporte 2026 Art to Acres - Rewild.xlsx
+	  *Archivo EXTRA		   1.2 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\5. Mayo 2026\T-520 RC Mayo 07.05.2026 $267.163.- VV.pdf
+	  *Archivo EXTRA		   4.7 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\6. Junio 2026\T-656 RC Junio 03.06.2026 $446.167.-VV.pdf
+	  *Archivo EXTRA		  400532	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Ecological Restoration Fund (Dan Hotz)\2024 Reporte ERF 30.04.2024.xlsx
+	  *Archivo EXTRA		  188198	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Tompkins Conservation\Reporte 2025 Tompkins Conservation - Rewild.xlsx
+	  *Archivo EXTRA		   99201	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\5. Mayo 2026\E-110 RC Mayo 14.05.2026 $709.929.850.-LA.pdf
+	  *Archivo EXTRA		  302479	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\3. Marzo 2026\I-37 TC Marzo 31.03.2026 $265.000.-LA.pdf100%  
+	    Nuevo arch		  321987	\\192.168.100.60\servidor_documentos\1. Facturas Compras 2026\RC\06. Junio 2026\26.06.122.pdf
+	  *Archivo EXTRA		  153855	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-69 TC Mayo 13.05.2026 $709.929.850.-LA.pdf
+	  *Archivo EXTRA		  521998	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-45 TC Abril 10.04.2026 $33.978.460.-LA.pdf
+	*Directorio EXTRA      -1	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Actas\Actas Fundaci¢n Yendegaia (antiguas)\
+	  *Archivo EXTRA		   4.1 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\5. Mayo 2026\T-521 RC Mayo 07.05.2026 $812.190.- VV.pdf
+	  *Archivo EXTRA		  479397	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\6. Junio 2026\T-657 RC Junio 03.06.2026 $73.049.-VV.pdf
+	  *Archivo EXTRA		  224988	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Ecological Restoration Fund (Dan Hotz)\2025 Reporte ERF 04.11.2025 Hoja Trabajo.xlsx
+	  *Archivo EXTRA		   61354	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Egresos\5. Mayo 2026\E-116 RC Mayo 25.05.2026 $2.886.832.-LA.pdf
+	  *Archivo EXTRA		  680544	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\3. Marzo 2026\I-38 TC Marzo 31.03.2026 $16.427.551.-LA.pdf100%  
+	    Nuevo arch		  936525	\\192.168.100.60\servidor_documentos\1. Facturas Compras 2026\RC\06. Junio 2026\26.06.123.pdf
+	  *Archivo EXTRA		  153179	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-70 TC Mayo 13.05.2026 $361.849.495.-LA.pdf
+	  *Archivo EXTRA		  151993	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-46 TC Abril 10.04.2026 $49.750.-LA.pdf
+	  *Archivo EXTRA		   9.2 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Actas\2017 Acta Sesion Extraordinaria Directorio 31.07.2017 Rep 2691 (estatutos refundidos 2017)Objeto y poder Rep legal.pdf
+	  *Archivo EXTRA		  411434	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\5. Mayo 2026\T-522 RC Mayo 07.05.2026 $94.051.- VV.pdf
+	  *Archivo EXTRA		   2.9 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\6. Junio 2026\T-658 RC Junio 03.06.2026 $99.146.-VV.pdf
+	  *Archivo EXTRA		   98083	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Ecological Restoration Fund (Dan Hotz)\2025 Reporte ERF 30.04.2025 21.03.2025.xlsx100%  
+	    Nuevo arch		  321663	\\192.168.100.60\servidor_documentos\1. Facturas Compras 2026\RC\06. Junio 2026\26.06.124.pdf
+	  *Archivo EXTRA		  134101	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-71 TC Mayo 14.05.2026 $22.200.-LA.pdf
+	  *Archivo EXTRA		  137538	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-47 TC Abril 13.04.2026 $3.013.120.000.-LA.pdf
+	  *Archivo EXTRA		   2.0 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Actas\2018 Acta Sesion Extraordinaria Directorio 05.02.2018 -  Cambio nombre a Fundacion Tompkins.pdf
+	  *Archivo EXTRA		  969948	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\5. Mayo 2026\T-523 RC Mayo 07.05.2026 $159.550.- VV.pdf
+	  *Archivo EXTRA		  132558	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\6. Junio 2026\T-659 RC Junio 03.06.2026 $232.996.-VV.pdf
+	  *Archivo EXTRA		  220501	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Ecological Restoration Fund (Dan Hotz)\2025 Reporte ERF 30.04.2025 Hoja Trabajo.xlsx100%  
+	    Nuevo arch		  321635	\\192.168.100.60\servidor_documentos\1. Facturas Compras 2026\RC\06. Junio 2026\26.06.125.pdf
+	  *Archivo EXTRA		  275796	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-76 TC Mayo 26.05.2026 $308.000.-LA.pdf
+	  *Archivo EXTRA		  136200	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-48 TC Abril 13.04.2026 $452.737.179.-LA.pdf
+	  *Archivo EXTRA		   4.6 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Actas\2018 Acta Sesion Extraordinaria Directorio 22.08.2018 Rep. Nø 3050-2018 revocaci¢n poder CS.pdf
+	  *Archivo EXTRA		   2.9 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\5. Mayo 2026\T-524 RC Mayo 11.05.2026 $88.728.- VV.pdf
+	  *Archivo EXTRA		  520511	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\6. Junio 2026\T-660 RC Junio 03.06.2026 $19.330.-VV.pdf
+	  *Archivo EXTRA		   46126	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Ecological Restoration Fund (Dan Hotz)\2025 Reporte ERF 30.04.2025 Preliminar 21.03.2025.pdf100%  
+	    Nuevo arch		  195404	\\192.168.100.60\servidor_documentos\1. Facturas Compras 2026\RC\06. Junio 2026\26.06.126.pdf
+	  *Archivo EXTRA		  117661	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-77 TC Mayo 27.05.2026 $172.921.-LA.pdf
+	  *Archivo EXTRA		  138984	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-49 TC Abril 13.04.2026 $706.960.615.-LA.pdf
+	  *Archivo EXTRA		   1.6 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Actas\2020 Acta Sesion Ordinaria Directorio 21.07.2020 Poder banco CM Reduccion a escritura Publica.pdf
+	  *Archivo EXTRA		   3.6 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\5. Mayo 2026\T-525 RC Mayo 11.05.2026 $159.783.- VV.pdf
+	  *Archivo EXTRA		   3.9 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\6. Junio 2026\T-661 RC Junio 03.06.2026 $35.140.-VV.pdf
+	  *Archivo EXTRA		  118337	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Ecological Restoration Fund (Dan Hotz)\B2026 - 2030 by Concept.pdf100%  
+	    Nuevo arch		  276391	\\192.168.100.60\servidor_documentos\1. Facturas Compras 2026\RC\06. Junio 2026\26.06.127.pdf
+	  *Archivo EXTRA		  206279	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-78 TC Mayo 27.05.2026 $503.619.-LA.pdf
+	  *Archivo EXTRA		  138544	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-50 TC Abril 13.04.2026 $360.336.083.-LA.pdf
+	  *Archivo EXTRA		   1.3 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Actas\2021 Acta Sesion Extraordinara Directorio 11.05.2021 - Renuncia al directorio LT y cambio a F Rewilding.pdf
+	  *Archivo EXTRA		   3.1 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\5. Mayo 2026\T-526 RC Mayo 11.05.2026 $56.710.- VV.pdf
+	  *Archivo EXTRA		  187247	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\6. Junio 2026\T-662 RC Junio 03.06.2026 $500.000.-VV.pdf
+	  *Archivo EXTRA		  102100	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Ecological Restoration Fund (Dan Hotz)\B2026 - 2030 by Program.pdf100%  
+	    Nuevo arch		  232281	\\192.168.100.60\servidor_documentos\1. Facturas Compras 2026\RC\06. Junio 2026\26.06.128.pdf
+	  *Archivo EXTRA		  698051	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-79 TC Mayo 29.05.2026 $210.649.975.-LA.pdf
+	  *Archivo EXTRA		   1.9 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-51 TC Abril 14.04.2026 $503.552.000.-LA.pdf
+	  *Archivo EXTRA		  623712	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Actas\2022 Acta Sesion Extraordinara Directorio 21.02.2022 - Designaci¢n CM.pdf
+	  *Archivo EXTRA		  615405	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\5. Mayo 2026\T-527 RC Mayo 11.05.2026 $1.614.000.- VV.pdf
+	  *Archivo EXTRA		  403069	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\6. Junio 2026\T-663 RC Junio 03.06.2026 $375.100.-VV donce dice el centro de costo (Cambiado).pdf
+	  *Archivo EXTRA		  221543	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Ecological Restoration Fund (Dan Hotz)\Copia de 2025 Reporte ERF 30.04.2025 Hoja Trabajo v2 08.05.2025.xlsx100%  
+	    Nuevo arch		  242775	\\192.168.100.60\servidor_documentos\1. Facturas Compras 2026\RC\06. Junio 2026\26.06.129.pdf
+	  *Archivo EXTRA		  385062	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\5. Mayo 2026\I-80 TC Mayo 31.05.2026 $77.872.-LA.pdf
+	  *Archivo EXTRA		   2.6 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-52 TC Abril 16.04.2026 $116.617.500.- falta grant (Agregado).pdf
+	  *Archivo EXTRA		   5.4 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Actas\2022 Acta Sesion Ordinaria Directorio 16.12.2022.pdf
+	  *Archivo EXTRA		  747041	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\5. Mayo 2026\T-528 RC Mayo 11.05.2026 $700.000.- LA.pdf
+	  *Archivo EXTRA		  306937	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\6. Junio 2026\T-663 RC Junio 03.06.2026 $375.100.-VV.pdf
+	  *Archivo EXTRA		  102007	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Ecological Restoration Fund (Dan Hotz)\Correo de Rewilding Chile - transferencia de prueba - 1 Libra.pdf100%  
+	  *Archivo EXTRA		  329510	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-52 TC Abril 16.04.2026 $116.617.500.-LA.pdf
+	  *Archivo EXTRA		   8.6 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Actas\2024 Acta Sesion Extraordinaria Directorio19.03.2024 Estatutos Refundidos RW CHILE Reduccion Escritura Publica.pdf
+	  *Archivo EXTRA		  511503	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\5. Mayo 2026\T-529 RC Mayo 11.05.2026 $99.520.- VV.pdf
+	  *Archivo EXTRA		   8.3 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\6. Junio 2026\T-664 RC Junio 03.06.2026 $78.082.-VV.pdf
+	  *Archivo EXTRA		   17127	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Ecological Restoration Fund (Dan Hotz)\ERF 2026-2030 2.xlsx
+	  *Archivo EXTRA		  121299	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-53 TC Abril 21.04.2026 $128.150.-LA.pdf
+	  *Archivo EXTRA		  13.7 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\5. Contratos-Escrituras\Doctos Rewilding Chile\Actas\2024 Acta Sesi¢n Extraordinaria Directorio 30.08.2024 Refundido estatutos. Poderes bancarios CM-MA-IE.pdf
+	  *Archivo EXTRA		  24.7 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\5. Mayo 2026\T-530 RC Mayo 11.05.2026 $89.359.- VV.pdf
+	  *Archivo EXTRA		   1.0 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Traspasos\5. Mayo 2026\T-531 RC Mayo 11.05.2026 $2.264.683.- VV.pdf
+	  *Archivo EXTRA		   44798	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\2. Grant y Reportes\Reportes Donantes\Ecological Restoration Fund (Dan Hotz)\ERF 2026-2030 FINAL.xlsx
+	  *Archivo EXTRA		   2.9 m	C:\Users\admin\OneDrive\Escritorio\documentos_servidor\1. Comprobantes 2026\RC\Ingresos\4. Abril 2026\I-54 TC Abril 22.04.2026 $159.802.200.- falta grant (Agregado).pdf
+	  *Archivo EXTRA		   2.4 m	

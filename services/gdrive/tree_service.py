@@ -3,7 +3,113 @@ from collections import defaultdict
 from googledrive.models import GoogleDriveFile
 
 FOLDER_MIME = "application/vnd.google-apps.folder"
+import logging
+logger = logging.getLogger(__name__)
 
+
+from collections import defaultdict
+import logging
+
+logger = logging.getLogger(__name__)
+
+# Constante para el MIME type de carpetas de Google Drive
+FOLDER_MIME = 'application/vnd.google-apps.folder'
+from collections import defaultdict
+import logging
+
+logger = logging.getLogger(__name__)
+
+# Constante para el MIME type de carpetas de Google Drive
+FOLDER_MIME = 'application/vnd.google-apps.folder'
+
+def obtener_arbol_subfolder(folder_id):
+    """
+    Obtiene todos los objetos (archivos y carpetas) hijos de un folder_id dado,
+    incluyendo todos los niveles de profundidad (recursivo).
+    
+    Args:
+        folder_id (str): El ID de Google Drive del folder padre
+        
+    Returns:
+        list: Lista de nodos raíz con toda la estructura de árbol
+    """
+    
+    def obtener_hijos(parent_id):
+        """
+        Función recursiva para obtener todos los hijos de un folder.
+        """
+        # Obtener hijos directos del parent_id
+        hijos = (
+            GoogleDriveFile.objects
+            .filter(parent_drive_file_id__drive_file_id=parent_id)
+            .select_related("document")
+            .values(
+                "id",
+                "drive_file_id",
+                "name",
+                "mime_type",
+                "parent_drive_file_id",
+                "drive_web_view_link",
+                "last_known_modified_time",
+                "document__text_content",
+                "document__description",
+            )
+        )
+        
+        resultado = []
+        for item in hijos:
+            is_folder = item["mime_type"] == FOLDER_MIME
+            
+            node = {
+                "id": str(item["id"]),
+                "drive_file_id": item["drive_file_id"],
+                "name": item["name"],
+                "mime_type": item["mime_type"],
+                "is_folder": is_folder,
+                "web_view_link": item["drive_web_view_link"],
+                "modified_time": item["last_known_modified_time"].isoformat() if item["last_known_modified_time"] else None,
+                "text_content": item.get("document__text_content"),
+                "description": item.get("document__description"),
+                "parent_drive_file_id": item["parent_drive_file_id"],
+                "children": []
+            }
+            
+            # Si es carpeta, obtener sus hijos recursivamente
+            if is_folder:
+                node["children"] = obtener_hijos(item["drive_file_id"])
+            
+            resultado.append(node)
+        
+        return resultado
+    
+    # Verificar que el folder_id existe
+    try:
+        root = GoogleDriveFile.objects.get(drive_file_id=folder_id)
+    except GoogleDriveFile.DoesNotExist:
+        logger.error(f"No se encontró el folder con drive_file_id: {folder_id}")
+        return []
+    
+    # Si el root no es una carpeta, retornar vacío
+    if root.mime_type != FOLDER_MIME:
+        logger.warning(f"El drive_file_id {folder_id} no es una carpeta")
+        return []
+    
+    # Construir el árbol completo empezando desde la raíz
+    root_node = {
+        "id": str(root.id),
+        "drive_file_id": root.drive_file_id,
+        "name": root.name,
+        "mime_type": root.mime_type,
+        "is_folder": True,
+        "web_view_link": root.drive_web_view_link,
+        "modified_time": root.last_known_modified_time.isoformat() if root.last_known_modified_time else None,
+        "text_content": None,
+        "description": None,
+        "parent_drive_file_id": None,
+        "children": obtener_hijos(folder_id)
+    }
+    
+    return [root_node]
 
 def obtener_arbol_area(area_id):
 
@@ -20,7 +126,8 @@ def obtener_arbol_area(area_id):
         "drive_web_view_link",
         "last_known_modified_time",
         # campos relacionados
-        "document__text_content",      
+        "document__text_content",    
+        "document__description",       
     ))
      
     nodes = {}
@@ -31,7 +138,7 @@ def obtener_arbol_area(area_id):
 
     # crear nodos
     for item in archivos:
-
+        
         node = {
 
             "id": str(item["id"]),
@@ -54,6 +161,9 @@ def obtener_arbol_area(area_id):
             "text_content": item[
                             "document__text_content"
                         ],
+             "description": item[
+                            "document__description"
+                        ],            
             "parent_drive_file_id":item["parent_drive_file_id"]             ,
             "children": []
 
@@ -78,5 +188,5 @@ def obtener_arbol_area(area_id):
             drive_id,
             []
         )
-
+   
     return roots

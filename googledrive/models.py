@@ -107,9 +107,10 @@ class GoogleDriveFileDocument(models.Model):
         db_column="drive_file_id",
         null=True
     )
-
+   
     text_content = models.TextField(null=True)
     search_vector = SearchVectorField(null=True)
-
+    description = models.TextField(null=True)
+    description_vector = SearchVectorField(null=True)
     class Meta:
         indexes = [GinIndex(fields=["search_vector"])]    

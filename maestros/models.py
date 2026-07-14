@@ -10,6 +10,9 @@ class UserProxy(User):
             ("ver_cta_remuneraciones", "Puede ver cta remuneraciones")
         ]
         
-from django.db import models
+ 
   
-
+class Action(models.Model):
+    nombre = models.CharField(max_length=100)
+    def __str__(self):
+        return self.nombre  

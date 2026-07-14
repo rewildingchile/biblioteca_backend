@@ -1,7 +1,6 @@
- 
 from django.contrib import admin
 
 # Register your models here.
-from  .models import Action
+from  .models import UserRequest
   
-admin.site.register(Action)
+admin.site.register(UserRequest)

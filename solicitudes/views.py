@@ -104,7 +104,7 @@ def ordenar_user_request(f):
     user_requests = (
         UserRequest.objects
         .filter(**f)
-        .select_related('type_action_request')
+        .select_related('type_action_request','googledrivefile_folder_origin','googledrivefile_folder_final')
         .order_by('last_synced_at')
     )
 
@@ -128,6 +128,8 @@ def ordenar_user_request(f):
             'mime_type': ur.mime_type,
             'folder_origin_id': ur.folder_origin_id,
             'folder_final_id': ur.folder_final_id,
+            'googledrivefile_folder_origin_name': ur.googledrivefile_folder_origin.name if ur.googledrivefile_folder_origin else None,
+            'googledrivefile_folder_final_name': ur.googledrivefile_folder_final.name if  ur.googledrivefile_folder_final else None,
             'pendiente': ur.pendiente,
             'type_action_request_nombre': ur.type_action_request.nombre if ur.type_action_request else None,
             'drive_name': drive_file.name if drive_file else None,

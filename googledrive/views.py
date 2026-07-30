@@ -545,6 +545,7 @@ class FileDocumentUpload(APIView):
                                                 "hidden":True
                     })    
                     googledrivefile_drive_file=    GoogleDriveFile.objects.get(drive_file_id=drive_file['file_id']) 
+                    googledrivefile_folder_final =  GoogleDriveFile.objects.get(drive_file_id=folder_destino_selec_by_user) 
                     UserRequest.objects.update_or_create(
                         drive_file_id=drive_file['file_id'],
                         defaults={
@@ -554,6 +555,7 @@ class FileDocumentUpload(APIView):
                             "mime_type": drive_file['mime_type'] ,
                             "folder_origin_id": final_parent_id,
                             "folder_final_id":  folder_destino_selec_by_user,  # Django ORM acepta instancia para ForeignKey
+                            "googledrivefile_folder_final": googledrivefile_folder_final,
                             "drive_web_view_link": drive_file['web_view_link']  ,
                             "last_synced_at": timezone.now(),
                             "type_action_request_id": 1,

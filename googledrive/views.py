@@ -14,7 +14,8 @@ from django.http import Http404
 from .serializers import GoogleDriveFileDocumentSerializer
 from .models import GoogleDriveFileDocument
 from .models import GoogleDriveFile
-from .models import Area
+from solicitudes.models import UserRequest
+from maestros.models import Area
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -26,15 +27,16 @@ import datetime
 from django.utils import timezone
 from django.db import transaction
 from googleapiclient.discovery import build
-
+from maestros.models import UsuarioArea
 
 import base64
 import mimetypes
 
-
 import logging
-logger = logging.getLogger(__name__)
-
+ 
+# Estos loggers ya están configurados en settings
+ 
+logger = logging.getLogger("services")
 
 
 
@@ -177,8 +179,22 @@ class DriveTreeView(APIView):
 
     def get(self, request, area_id):
 
-        tree = obtener_arbol_area(area_id)
-
+        # request.user.id    
+        if not request.user.id:
+            return Response(
+                {"error": "identificacion usuario es requerida"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        areas = UsuarioArea.objects.filter(user_id=request.user.id)    
+        try:
+            logger.info(areas)
+            area = areas.first()
+            if area:
+                tree = obtener_arbol_area(area_id)
+            else:   
+                tree = []
+        except UsuarioArea.DoesNotExist:
+                tree = []        
         return Response(tree)    
     
 class DriveTreeFolderView(APIView):    
@@ -221,9 +237,9 @@ class FileDocumentContentView(APIView):
                 },
             )
             if created:
-                logger.debug(f"Nuevo: {file_id}  ")
+                logger.info(f"Nuevo: {file_id}  ")
             else:
-                logger.debug(f"Actualizado: {file_id}  ")
+                logger.info(f"Actualizado: {file_id}  ")
 
            
 
@@ -258,9 +274,9 @@ class FileDocumentDescriptionView(APIView):
                 },
             )
             if created:
-                logger.debug(f"Nuevo: {file_id}  ")
+                logger.info(f"Nuevo: {file_id}  ")
             else:
-                logger.debug(f"Actualizado: {file_id}  ")
+                logger.info(f"Actualizado: {file_id}  ")
 
            
 
@@ -273,7 +289,7 @@ class FileDocumentDescriptionView(APIView):
                 "message": "hola!",
                 
             }, status=status.HTTP_200_OK)
-
+    
 class PrepareUploadView(APIView):
     """
     Endpoint para preparar la estructura de carpetas ANTES de subir archivos
@@ -283,9 +299,17 @@ class PrepareUploadView(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
-        folder_id = request.data.get('folder_id')
-        relative_path = request.data.get('relative_path', '')
-        area_id = request.data.get('area_id')
+        user=request.user
+      
+        
+        relative_path                = request.data.get('relative_path', '')
+        area_id                      = request.data.get('area_id')
+        folder_destino_selec_by_user = ""
+
+        # folder_id: (en que folder se prepara esta carpeta)
+        folder_id  = request.data.get('folder_id')
+        folder_destino_en_biblioteca= folder_id
+
         if not folder_id:
             return Response(
                 {'error': 'Se requiere folder_id'},
@@ -293,7 +317,22 @@ class PrepareUploadView(APIView):
             )
         
         area = Area.objects.get(id=area_id)
+        upload_granted = True
+       
+       
 
+        if user.id == 4:
+             upload_granted=False 
+        
+                 
+
+
+        #------------------------------------------
+        # si no tiene permiso de Manager
+        # folder_id: será la carpeta temporal
+        if upload_granted is False:
+                folder_id = area.temporal_folder_id 
+        #-------------------------------------------
         
         try:
             google_drive = GoogleDriveService() 
@@ -303,26 +342,68 @@ class PrepareUploadView(APIView):
                     folder_id, 
                     relative_path
                 )
-                final_folder_id=obj['file_id']
+                folder_container_id=obj['file_id']
             else:
-                final_folder_id = folder_id
+                folder_container_id = folder_id
 
             parent_obj = GoogleDriveFile.objects.filter(drive_file_id=obj["parent_folder_id"]).first() 
-            GoogleDriveFile.objects.update_or_create(
-                    drive_file_id=final_folder_id,
-                    defaults={
+            d={
                         "area": area,
                         "name": obj['name'],
                         "mime_type": obj['mime_type'],
                         "parent_drive_file_id": parent_obj,  # Django ORM acepta instancia para ForeignKey
                         "drive_web_view_link": obj['web_view_link']  ,
                         "last_synced_at": timezone.now(),
-                })
-            return Response({
-                'success': True,
-                'folder_id': final_folder_id,
-                'relative_path': relative_path
-            })
+                       
+            }
+            if upload_granted == False:
+                 d['hidden']=True
+                 
+            GoogleDriveFile.objects.update_or_create(
+                    drive_file_id=folder_container_id,
+                    defaults=d)
+
+
+            data_response={
+                                        'success': True,
+                                        'folder_id': folder_container_id,
+                                        'relative_path': relative_path
+            }
+           
+            if upload_granted is False:
+                try:
+                    folder_destino_selec_by_user=folder_id
+                    data_response['folder_destino_selec_by_user']=folder_destino_selec_by_user
+                    googledrivefile_folder_origin= GoogleDriveFile.objects.get(drive_file_id=folder_id) 
+                    googledrivefile_folder_final= GoogleDriveFile.objects.get(drive_file_id=folder_destino_en_biblioteca) 
+
+                    googledrivefile_drive_file=    GoogleDriveFile.objects.get(drive_file_id=obj["file_id"]) 
+                    UserRequest.objects.update_or_create(
+                                        drive_file_id=obj['file_id'],
+                                        defaults={
+                                            "area": area,
+                                            "user": user,
+                                            "name":  obj['name'],
+                                            "mime_type": obj['mime_type'] ,
+                                            "folder_origin_id": folder_id,
+                                            "googledrivefile_folder_origin": googledrivefile_folder_origin,
+                                            "folder_final_id":  folder_destino_en_biblioteca,
+                                            "googledrivefile_folder_final":  googledrivefile_folder_final, 
+                                            "googledrivefile_drive_file":googledrivefile_drive_file,
+                                            "drive_web_view_link": obj['web_view_link']   ,
+                                            "last_synced_at": timezone.now(),
+                                            "type_action_request_id": 1 
+                
+                                    })    
+                except Exception as e:
+                            logger.error(f"Error registro USERREQUEST: {folder_id} no existe en googledrivefile {str(e)}")
+                            return Response(
+                                {'error': str(e)},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                            )
+
+            
+            return Response(data_response)
             
         except Exception as e:
             logger.error(f"Error preparando carpeta: {str(e)}")
@@ -331,7 +412,10 @@ class PrepareUploadView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+ 
 from services.gdrive.google_service import GoogleDriveService
+
+
 class FileDocumentUpload(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -341,16 +425,24 @@ class FileDocumentUpload(APIView):
                           '.xlsx', '.txt', '.zip', '.mp4', '.mp3', '.ppt', '.pptx']
     
     def post(self, request):
-        """
-        Sube archivo directamente a Google Drive
-        """
-        area_id=request.data.get('area_id')
-        
-        logger.error(f"***********************************")
-        print ('AREA')
-        logger.error(f"area {area_id}")
-        area = Area.objects.get(id=area_id)
+        user    = request.user
+        area_id = request.data.get('area_id')
+        relative_path   = request.POST.get('relativePath', '')
+        folder_id       = request.POST.get('folder_id')
 
+        area    = Area.objects.get(id=area_id)
+        
+        upload_granted = True
+        
+        if user.id == 4:
+             upload_granted=False
+             folder_destino_selec_by_user = request.data.get('folder_destino_selec_by_user')
+             if not folder_destino_selec_by_user:
+                    # se trata de un file (no folder)
+                    folder_destino_selec_by_user = folder_id
+                    folder_id = area.temporal_folder_id
+            
+ 
         google_drive = GoogleDriveService()  
         
         # Validar archivo
@@ -377,8 +469,7 @@ class FileDocumentUpload(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        relative_path = request.POST.get('relativePath', '')
-        folder_id = request.POST.get('folder_id')
+        
         
         if not folder_id:
             return Response(
@@ -422,16 +513,213 @@ class FileDocumentUpload(APIView):
                 if final_parent_id:
                     parent_obj = GoogleDriveFile.objects.filter(drive_file_id=drive_file["parent_folder_id"]).first()
                 logger.info(f"parent obj: {parent_obj}")
-                GoogleDriveFile.objects.update_or_create(
-                    drive_file_id=drive_file['file_id'],
-                    defaults={
-                        "area": area,
-                        "name": drive_file['name'],
-                        "mime_type": drive_file['mime_type'] ,
-                        "parent_drive_file_id": parent_obj,  # Django ORM acepta instancia para ForeignKey
-                        "drive_web_view_link": drive_file['web_view_link']  ,
-                        "last_synced_at": timezone.now(),
-                })
+
+                
+
+                if upload_granted:
+                    GoogleDriveFile.objects.update_or_create(
+                        drive_file_id=drive_file['file_id'],
+                        defaults={
+                            "area": area,
+                            "user": user,
+                            "name": drive_file['name'],
+                            "mime_type": drive_file['mime_type'] ,
+                            "parent_drive_file_id": parent_obj,  # Django ORM acepta instancia para ForeignKey
+                            "drive_web_view_link": drive_file['web_view_link']  ,
+                            "last_synced_at": timezone.now(),
+                            
+                    })
+                else:
+
+
+                    GoogleDriveFile.objects.update_or_create(
+                                            drive_file_id=drive_file['file_id'],
+                                            defaults={
+                                                "area": area,
+                                                "user": user,
+                                                "name": drive_file['name'],
+                                                "mime_type": drive_file['mime_type'] ,
+                                                "parent_drive_file_id": parent_obj,  # Django ORM acepta instancia para ForeignKey
+                                                "drive_web_view_link": drive_file['web_view_link']  ,
+                                                "last_synced_at": timezone.now(),
+                                                "hidden":True
+                    })    
+                    googledrivefile_drive_file=    GoogleDriveFile.objects.get(drive_file_id=drive_file['file_id']) 
+                    UserRequest.objects.update_or_create(
+                        drive_file_id=drive_file['file_id'],
+                        defaults={
+                            "area": area,
+                            "user": user,
+                            "name": drive_file['name'],
+                            "mime_type": drive_file['mime_type'] ,
+                            "folder_origin_id": final_parent_id,
+                            "folder_final_id":  folder_destino_selec_by_user,  # Django ORM acepta instancia para ForeignKey
+                            "drive_web_view_link": drive_file['web_view_link']  ,
+                            "last_synced_at": timezone.now(),
+                            "type_action_request_id": 1,
+                            "googledrivefile_drive_file": googledrivefile_drive_file
+
+                    })       
+
+
+                data_response = {
+                                'success': True,
+                                'message': 'Archivo subido exitosamente',
+                                'file': {
+                                    'name': drive_file['name'],
+                                    'size': drive_file['size'],
+                                    'web_link': drive_file['web_view_link'],
+                                    'drive_id': drive_file['file_id']
+                                }
+                }
+                
+
+                             
+        except Exception as e:
+                logger.error(f"Error grabando registro GoogleDriveFile: {e}")    
+                return Response({
+                'error': f'Error grabando registro file: {str(e)}'
+                } , status=status.HTTP_500_INTERNAL_SERVER_ERROR)  
+          
+        return Response(data_response, status=status.HTTP_201_CREATED)
+            
+
+
+class old_FileDocumentUpload(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    MAX_FILE_SIZE = 100 * 1024 * 1024
+    ALLOWED_EXTENSIONS = ['.pdf', '.jpg', '.jpeg', '.png', '.doc', '.docx', '.xls', 
+                          '.xlsx', '.txt', '.zip', '.mp4', '.mp3', '.ppt', '.pptx']
+    
+    def post(self, request):
+        """
+        Sube archivo directamente a Google Drive
+        payload:
+        file: (binary)
+        folder_id: 1KvNiZ9Kc7HkN_1BafHvgm5FD6ZmNlt76
+        area_id: 2
+        """
+        user=request.user
+        area_id=request.data.get('area_id')
+        area = Area.objects.get(id=area_id)
+        folder_id = request.POST.get('folder_id')
+        if not folder_id:
+            return Response(
+                {'error': 'Se requiere folder_id'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+      
+
+       
+        google_drive = GoogleDriveService()  
+        # Validar archivo
+        uploaded_file = request.FILES.get('file')
+        if not uploaded_file:
+            return Response(
+                {'error': 'No se proporcionó ningún archivo'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Validar tamaño
+        if uploaded_file.size > self.MAX_FILE_SIZE:
+            return Response(
+                {'error': f'El archivo excede el tamaño máximo'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Validar extensión
+        from pathlib import Path
+        file_extension = Path(uploaded_file.name).suffix.lower()
+        if file_extension not in self.ALLOWED_EXTENSIONS:
+            return Response(
+                {'error': f'Tipo de archivo no permitido'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+      
+        relative_path = request.POST.get('relativePath', '')
+        
+        
+        try:
+
+            '''
+                    Si el usuario es editor:
+                    revisar sus permisos
+            
+                    sino tiene permisos, se crea registro UserRequest
+
+                    folder_id pasa a ser el ID_CARPETA_TEMPORAL del area del usuario.  
+            '''    
+            upload_granted = True
+
+            area  = Area.objects.get(id=area_id)
+            
+
+            
+            if relative_path:
+                    final_parent_id = google_drive.create_folder_structure(
+                        folder_id, 
+                        relative_path
+                    )
+                
+            
+            # Subir archivo
+            import io
+            file_obj = io.BytesIO(uploaded_file.read()) 
+            
+            # .read() Lee todo el contenido del archivo y devuelve bytes
+            # io.BytesIO(...) Crea un archivo virtual en memoria con esos bytes
+
+            drive_file = google_drive.upload_file(
+                file_obj=file_obj,
+                filename=uploaded_file.name,
+                parent_folder_id=final_parent_id,
+                mime_type=uploaded_file.content_type,
+                chunk_size=10 * 1024 * 1024
+            )
+
+        except Exception as e:
+            logger.error(f"Error en upload: {str(e)}", exc_info=True)
+            return Response({
+                'error': f'Error al subir archivo: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+        try:
+                parent_obj = None
+                if final_parent_id:
+                        parent_obj = GoogleDriveFile.objects.filter(drive_file_id=drive_file["parent_folder_id"]).first()
+                logger.info(f"parent obj: {parent_obj}")    
+
+                if upload_granted:
+
+                    GoogleDriveFile.objects.update_or_create(
+                        drive_file_id=drive_file['file_id'],
+                        defaults={
+                            "area": area,
+                            "user": user,
+                            "name": drive_file['name'],
+                            "mime_type": drive_file['mime_type'] ,
+                            "parent_drive_file_id": parent_obj,  # Django ORM acepta instancia para ForeignKey
+                            "drive_web_view_link": drive_file['web_view_link']  ,
+                            "last_synced_at": timezone.now(),
+                    })
+                else:
+                    UserRequest.objects.update_or_create(
+                        drive_file_id=drive_file['file_id'],
+                        defaults={
+                            "area": area,
+                            "user": user,
+                            "name": drive_file['name'],
+                            "mime_type": drive_file['mime_type'] ,
+                            "folder_origin_id": final_parent_id,
+                            "folder_final_id":  folder_id,  # Django ORM acepta instancia para ForeignKey
+                            "drive_web_view_link": drive_file['web_view_link']  ,
+                            "last_synced_at": timezone.now(),
+                            "type_action_request_id": 1
+
+                    })
 
         except Exception as e:
                 logger.error(f"Error grabando registro GoogleDriveFile: {e}")    

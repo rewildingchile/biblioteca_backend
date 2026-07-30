@@ -1,12 +1,9 @@
 from django.db import models
 
 # Create your models here.
-
-class Area(models.Model):
-    nombre = models.CharField(max_length=100)
-    def __str__(self):
-        return self.nombre    
-        
+from django.contrib.auth.models import User
+from maestros.models import Area 
+from maestros.models import TypeActionRequest        
 import uuid
 
 class GoogleDriveFile(models.Model):
@@ -20,7 +17,9 @@ class GoogleDriveFile(models.Model):
         editable=False,
         help_text="Identificador único en tu BD."
     )
+    hidden = models.BooleanField(default=False,null=True)
     area =  models.ForeignKey(Area, null=True,on_delete=models.CASCADE,default=0)
+    user =  models.ForeignKey(User, on_delete=models.CASCADE,default=2)    
     drive_file_id = models.CharField(
         max_length=255,
         unique=True,
@@ -114,3 +113,5 @@ class GoogleDriveFileDocument(models.Model):
     description_vector = SearchVectorField(null=True)
     class Meta:
         indexes = [GinIndex(fields=["search_vector"])]    
+
+

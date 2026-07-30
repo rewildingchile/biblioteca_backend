@@ -6,7 +6,7 @@ from pathlib import Path
 
 from googleapiclient.errors import HttpError
 
-from googledrive.models import Area
+ 
 from googledrive.models import GoogleDriveFile
 from googledrive.models import GoogleDriveSyncState
 from typing import Optional, Dict 

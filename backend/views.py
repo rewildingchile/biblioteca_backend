@@ -8,13 +8,15 @@ from .serializers import LoginJWTSerializer
 from .serializers import LoginJWTTemporalSerializer
 from .serializers import VerifyOtpSerializer
 
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group 
 from django.http import JsonResponse
  
 import logging
 import os
 
-logger = logging.getLogger(__name__)
+from maestros.models import UsuarioArea 
+
+logger = logging.getLogger("services")
 
   
 
@@ -144,6 +146,7 @@ class LoginJWTTemporalView(APIView):
     Emitir JWT final + refresh
     Marcar 2fa=True
     '''
+import json
 
 from rest_framework.permissions import IsAuthenticated
 class VerifyOtpView(APIView):
@@ -156,8 +159,24 @@ class VerifyOtpView(APIView):
         serializer = VerifyOtpSerializer(
                         data=request.data,
                         context={"user":request.user.id})
+        
         if serializer.is_valid():
             user = request.user
+            
+             # ✅ Volcar contenido de user a logger.activity
+            logger.info(f"Usuario verificado OTP: {user.id} - {user.username}")
+            logger.info(f"Datos del usuario: ID={user.id}, Email={user.email}, Nombre={user.first_name} {user.last_name}")
+            # Opcional: volcar todos los atributos
+            logger.info(f"User attributes: {vars(user)}")
+ 
+            # ✅ Acceder a través de la relación ManyToMany
+            
+            grupos = user.groups.all()  # SELECT * FROM auth_user_groups WHERE user_id = 1
+            grupos_data = list(grupos.values('id','name'))
+
+            areas = UsuarioArea.objects.filter(user_id=user.id)
+            areas_data = list(areas.values('area__id', 'area__nombre','rol_id','rol__nombre'))
+        
             device = serializer.validated_data["device"]
             # confirmar dispositivo  si es primer uso
             if not device.confirmed:
@@ -177,12 +196,8 @@ class VerifyOtpView(APIView):
 
             modifica_presupuestos=False
             is_admin = user.groups.filter(name__iexact="Admin").exists()
-            if is_admin:
-                    modifica_presupuestos=True    
-
-         
              
-            logger.info("login exitoso")
+ 
 
             return Response({
                   "status":200,
@@ -199,8 +214,8 @@ class VerifyOtpView(APIView):
                     "nombres": user.first_name,
                     "apellido1": user.last_name,
                     "is_admin":is_admin,
-                    "modifica_presupuestos": modifica_presupuestos,
-                             
+                    "areas": areas_data,
+                    "grupos": grupos_data,         
                 }
                 }
             })    

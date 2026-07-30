@@ -3,7 +3,7 @@ import datetime
 from django.utils import timezone
 from googleapiclient.errors import HttpError
 
-from googledrive.models import Area
+ 
 from googledrive.models import GoogleDriveFile
 from googledrive.models import GoogleDriveSyncState
 
@@ -115,6 +115,7 @@ def sync_full(
         root_obj, root_created = GoogleDriveFile.objects.update_or_create(
             drive_file_id=folder_id,
             defaults={
+                "hidden": False,
                 "area": area,
                 "name": root_name,
                 "mime_type": root_mime,
@@ -224,6 +225,7 @@ def sync_full(
         deleted_count, _ = GoogleDriveFile.objects.filter(
             area=area,
             last_synced_at__lt=sync_started_at,
+            hidden =False 
         ).delete()
         logger.info(f"Registros obsoletos eliminados: {deleted_count}")
 

@@ -4,7 +4,7 @@ from services.gdrive.sync_service import sync_full
 from services.gdrive.sync_service import sync_changes
  
 
-from googledrive.models import   Area
+from maestros.models import   Area
 import logging
 
 logger = logging.getLogger(__name__)
@@ -14,18 +14,21 @@ def sync_full_task(self,area_id):
         logger.info( f" {logger.name} --> Iniciando tarea fulldrive_task")
         service = conectar_drive()
      
-        FOLDER_IDS = {
+        """  FOLDER_IDS = {
                 1: "1fQmuOcRH4E5KEM2S3NXQSJwVK_1U02zD",
                 2: "16j0klxJnQspJ1mvafpnMaRx7Xd1SRIDO",
         }
 
-        folder_id = FOLDER_IDS.get(area_id)
+        folder_id = FOLDER_IDS.get(area_id) """
 
-        if not folder_id:
-                raise ValueError(f"Área no soportada: {area_id}")
+      
 
         area = Area.objects.get(id=area_id)
         try:
+                folder_id= area.biblioteca_folder_id  
+                if not folder_id:
+                        raise ValueError(f"Área no soportada: {area_id}")
+                
                 sync_full( service, folder_id, area )
         except Exception:
                 logger.exception("Error en celery")        

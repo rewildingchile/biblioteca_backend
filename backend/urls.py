@@ -29,6 +29,7 @@ from googledrive.views import FileDocumentDescriptionView,FileDocumentUpload
 from googledrive.views import PrepareUploadView, FileDocumentDelete
 from googledrive.views import ViewDriveFileView
 from googledrive.views import SearchView 
+from solicitudes.views import ListUserRequest
 
 from  .views import M2mTokenView, Test 
 from logging_conf.views import ver_activity_log, ver_importlibromayor_log
@@ -59,4 +60,5 @@ urlpatterns = [
     path("api/v1/deletefile/",FileDocumentDelete.as_view()),
     path('api/v1/drive/files/<str:file_id>/view/', ViewDriveFileView.as_view(), name='view-drive-file'),
     path('api/v1/search/', SearchView.as_view(), name='view-search'),
+    path('api/v1/user_request/',ListUserRequest.as_view(),name='list-user_request')
 ]

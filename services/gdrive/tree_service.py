@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from googledrive.models import GoogleDriveFile
+from solicitudes.models import UserRequest
 
 FOLDER_MIME = "application/vnd.google-apps.folder"
 import logging
@@ -8,16 +9,12 @@ logger = logging.getLogger(__name__)
 
 
 from collections import defaultdict
-import logging
-
-logger = logging.getLogger(__name__)
+ 
 
 # Constante para el MIME type de carpetas de Google Drive
 FOLDER_MIME = 'application/vnd.google-apps.folder'
 from collections import defaultdict
-import logging
-
-logger = logging.getLogger(__name__)
+ 
 
 # Constante para el MIME type de carpetas de Google Drive
 FOLDER_MIME = 'application/vnd.google-apps.folder'
@@ -111,12 +108,34 @@ def obtener_arbol_subfolder(folder_id):
     
     return [root_node]
 
-def obtener_arbol_area(area_id):
 
+from django.db.models import Subquery, OuterRef, Exists, Q, BooleanField, Value
+from django.db.models.functions import Coalesce
+def obtener_arbol_area(area_id):
+    user_request_exists = UserRequest.objects.filter(
+            folder_final_id=OuterRef('drive_file_id'),
+            pendiente=True
+        )
+    
     archivos = ( 
     GoogleDriveFile.objects
-    .filter(area_id=area_id)
+    .filter(area_id=area_id, hidden=False)
     .select_related("document")
+    .annotate(
+                # Columna virtual booleana: True si existe UserRequest que cumpla condiciones
+                user_request=Coalesce(
+                    Exists(
+                        user_request_exists.filter(
+                            # Solo para carpetas
+                            Q(folder_final_id=OuterRef('drive_file_id')) &
+                            Q(pendiente=True)
+                        )
+                    ),
+                    Value(False),
+                    output_field=BooleanField()
+                ),
+              
+    )
     .values(
         "id",
         "drive_file_id",
@@ -125,6 +144,7 @@ def obtener_arbol_area(area_id):
         "parent_drive_file_id",
         "drive_web_view_link",
         "last_known_modified_time",
+        "user_request",  # Campo virtual booleano
         # campos relacionados
         "document__text_content",    
         "document__description",       
@@ -138,7 +158,8 @@ def obtener_arbol_area(area_id):
 
     # crear nodos
     for item in archivos:
-        
+        user_request_value = item["user_request"] if item["user_request"] else False
+                
         node = {
 
             "id": str(item["id"]),
@@ -152,7 +173,7 @@ def obtener_arbol_area(area_id):
             "is_folder": (
                 item["mime_type"] == FOLDER_MIME
             ),
-
+            "user_request": user_request_value,
             "web_view_link": item["drive_web_view_link"],
 
             "modified_time": item[

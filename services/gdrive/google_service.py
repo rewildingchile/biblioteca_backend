@@ -505,3 +505,46 @@ class GoogleDriveService:
         except Exception as error:
             logger.error(f"❌ Error inesperado eliminando {file_id}: {error}")
             return False
+
+
+
+    def find_subfolder_by_name(self, folder_name: str, parent_folder_id: Optional[str] = None) -> Optional[Dict]:
+        """
+        Busca una carpeta por nombre en un directorio específico.
+        
+        Args:
+            folder_name: Nombre de la carpeta a buscar
+            parent_folder_id: ID de la carpeta padre (opcional)
+            
+        Returns:
+            Dict con la información de la carpeta si existe, None si no
+        """
+        try:
+            query = f"name='{folder_name}' and mimeType='application/vnd.google-apps.folder' and trashed=false"
+
+            if parent_folder_id:
+                query += f" and '{parent_folder_id}' in parents"
+
+            logger.info(f"🔎 consultando: {query}")
+
+            results = self.service.files().list(
+                q=query,
+                spaces='drive',
+                fields="files(id, name, parents)",
+                pageSize=10,
+                supportsAllDrives=True,
+                includeItemsFromAllDrives=True
+            ).execute()
+            
+            files = results.get('files', [])
+            
+            if files:
+                # Si hay múltiples, retornar el primero
+                logger.info(f"🔔 existe carpeta con el mismo nombre")
+                return files[0]
+            return None
+            
+        except Exception as e:
+            logging.error(f"Error al buscar carpeta '{folder_name}': {str(e)}")
+            return None
+    

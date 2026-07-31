@@ -336,13 +336,36 @@ class PrepareUploadView(APIView):
         
         try:
             google_drive = GoogleDriveService() 
+
+
+
+
             
             if relative_path:
-                obj = google_drive.create_folder_structure(
-                    folder_id, 
-                    relative_path
-                )
-                folder_container_id=obj['file_id']
+                existing_folder = google_drive.find_subfolder_by_name(relative_path, folder_id)
+                        
+                if existing_folder:
+                                # Si existe, crear un nombre con timestamp
+                                from datetime import datetime
+                                timestamp = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+                                new_folder_name = f"{relative_path}_{timestamp}"
+                                
+                                # Crear la carpeta con el nuevo nombre
+                                obj = google_drive.create_folder_structure(
+                                    folder_id,
+                                    new_folder_name
+                                )
+                                folder_container_id = obj['file_id']
+                            
+                else:
+                                
+                                #------------------------------------------------
+                                obj = google_drive.create_folder_structure(
+                                    folder_id, 
+                                    relative_path
+                                )
+                                folder_container_id=obj['file_id']
+                                #-----------------------------------------------
             else:
                 folder_container_id = folder_id
 

@@ -190,7 +190,7 @@ class DriveTreeView(APIView):
             logger.info(areas)
             area = areas.first()
             if area:
-                tree = obtener_arbol_area(area_id)
+                tree = obtener_arbol_area(area_id, request.user.id)
             else:   
                 tree = []
         except UsuarioArea.DoesNotExist:
@@ -282,6 +282,84 @@ class FileDocumentDescriptionView(APIView):
 
         except Exception as e:
             logger.exception(f"Error guardando {file_id} : {e}")
+
+
+        return Response({
+                "status": 200,
+                "message": "hola!",
+                
+            }, status=status.HTTP_200_OK)
+
+class FileDocumentNameUpdateView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+
+            
+        drive_file_id = request.data.get('drive_file_id')
+        new_name = request.data.get('new_name')
+        area_id = request.data.get('area_id')
+
+        if not drive_file_id or not new_name or not area_id:
+            return Response(
+                {"error": "drive_file_id , new_name, area son requeridos"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+        #-------------------------------------
+        # verificar rol del usuario
+        #------------------------------------
+        try:
+                  
+            area    = Area.objects.get(id=area_id)
+            usuarioarea = UsuarioArea.objects.get(area=area, user=request.user)
+        
+        except Exception as e:
+            logger.error(f"Error al buscar UsuarioArea {area_id} {area} - user :{request.user.id} : {str(e)}" )
+            return Response({
+                        'error': f'Error al buscar UsuarioArea  {area_id}- user :{request.user.id} : {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+      
+      
+        if usuarioarea.rol_id != 1:
+            logger.error(f"user :{request.user.id}  no tiene permisos para esta accion de RENOMBRAR" )
+            return Response({
+                        'error': f"user :{request.user.id}  no tiene permisos para esta accion de RENOMBRAR"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        google_drive = GoogleDriveService() 
+        try:
+            if not google_drive.rename_file(drive_file_id,new_name):
+                return Response({
+                    'error': 'No se pudo renombrar el archivo en api Google Drive',
+                    'detail': 'El archivo id:'+str(drive_file_id)+' podría no existir en Google Drive o no tener permisos'
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            logger.error(f"Error en Google Drive: {e}")
+            return Response({
+                'error': f'Error en Google Drive: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+        
+        try:
+            obj, created = GoogleDriveFile.objects.update_or_create(
+                drive_file_id=drive_file_id,
+                defaults={
+                    "name": new_name,
+                },
+            )
+            if created:
+                logger.info(f"Nuevo: {drive_file_id}  ")
+            else:
+                logger.info(f"Actualizado: {drive_file_id}  ")
+
+           
+
+        except Exception as e:
+            logger.exception(f"Error guardando {drive_file_id} : {e}")
 
 
         return Response({
@@ -449,15 +527,31 @@ class FileDocumentUpload(APIView):
     
     def post(self, request):
         user    = request.user
-        area_id = request.data.get('area_id')
+        area_id = request.POST.get('area_id')
         relative_path   = request.POST.get('relativePath', '')
         folder_id       = request.POST.get('folder_id')
 
-        area    = Area.objects.get(id=area_id)
         
+
+        #-------------------------------------
+        # verificar rol del usuario
+        #------------------------------------
+        try:
+          
+            area    = Area.objects.get(id=area_id)
+            usuarioarea = UsuarioArea.objects.get(area=area, user=user)
+
+        except Exception as e:
+                    logger.error(f"Error al buscar UsuarioArea {area_id} {area} - user :{user.id} : {str(e)}" )
+                    return Response({
+                        'error': f'Error al buscar UsuarioArea  {area_id}- user :{user.id} : {str(e)}'
+                    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
         upload_granted = True
         
-        if user.id == 4:
+        if usuarioarea.rol_id != 1:
              upload_granted=False
              folder_destino_selec_by_user = request.data.get('folder_destino_selec_by_user')
              if not folder_destino_selec_by_user:
@@ -770,13 +864,42 @@ class FileDocumentDelete(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
         drive_file_id = request.data.get('drive_file_id')
-        
+        area_id = request.data.get('area_id')        
       
         if not  drive_file_id:
              return Response({
                   'error':'drive_file_id requerido',
                   'detail':'proporcione drive_file_id del archivo a eliminar'
              },status=status.HTTP_400_BAD_REQUEST)
+
+        if not  area_id:
+             return Response({
+                  'error':'area_id requerido',
+                  'detail':'proporcione area_id del archivo a eliminar'
+             },status=status.HTTP_400_BAD_REQUEST)        
+
+        #-------------------------------------
+        # verificar rol del usuario
+        #------------------------------------
+        try:
+                  
+            area    = Area.objects.get(id=area_id)
+            usuarioarea = UsuarioArea.objects.get(area=area, user=request.user)
+        
+        except Exception as e:
+            logger.error(f"Error al buscar UsuarioArea {area_id} {area} - user :{request.user.id} : {str(e)}" )
+            return Response({
+                        'error': f'Error al buscar UsuarioArea  {area_id}- user :{request.user.id} : {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+      
+        if usuarioarea.rol_id != 1:
+            logger.error(f"user :{request.user.id}  no tiene permisos para esta accion de BORRAR" )
+            return Response({
+                        'error': f"user :{request.user.id}  no tiene permisos para esta accion de BORRAR"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+              
+
+
       
         # Verificar si existe en BD antes de eliminar
         try:

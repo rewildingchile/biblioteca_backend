@@ -100,6 +100,8 @@ class UserRequest(models.Model):
     # nuevo nombre del archivo en folder destino
     new_name = models.CharField(
         max_length=255,
+        null=True,
+        blank=True,
         help_text="El nombre del archivo o carpeta."
     )
  
@@ -107,3 +109,4 @@ class UserRequest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     pendiente = models.BooleanField(default=True)
+    anulado = models.BooleanField(default=False)

@@ -108,14 +108,53 @@ def obtener_arbol_subfolder(folder_id):
     
     return [root_node]
 
-
+from rest_framework import status
+from rest_framework.response import Response
 from django.db.models import Subquery, OuterRef, Exists, Q, BooleanField, Value
 from django.db.models.functions import Coalesce
-def obtener_arbol_area(area_id):
+from maestros.models import Area, UsuarioArea
+from solicitudes.models import UserRequest
+from django.contrib.auth.models import User
+def obtener_arbol_area(area_id,user_id):
+    try:
+            area = Area.objects.get(id=area_id)
+            user = User.objects.get(id=user_id)
+            usuarioarea = UsuarioArea.objects.filter(area=area, user=user).first()
+            if not usuarioarea:
+                return Response({
+                            'error': 'no existe usuarioarea'
+                         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
+            rol = usuarioarea.rol.id
+    except Exception as e:
+                logger.error(f"error UsuarioArea: {e}")
+                return Response({
+                                'error': f"error UsuarioArea: {e}"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    f = {
+            'pendiente': True,
+            'anulado':False
+        }  
+
+    ''' 
+         Si user pertenece a rol 'manager', puede ver las todas las solicitudes de mi area.
+    '''
+
+    if rol != 1:
+            f['user'] = user_id   
+
+
     user_request_exists = UserRequest.objects.filter(
             folder_final_id=OuterRef('drive_file_id'),
-            pendiente=True
+            **f
         )
+
+
+
+    '''user_request_exists = UserRequest.objects.filter(
+            folder_final_id=OuterRef('drive_file_id'),
+            pendiente=True
+        )'''
     
     archivos = ( 
     GoogleDriveFile.objects

@@ -195,7 +195,7 @@ class VerifyOtpView(APIView):
         
 
             modifica_presupuestos=False
-            is_admin = user.groups.filter(name__iexact="Admin").exists()
+            is_admin = user.groups.filter(name__iexact="admin_biblioteca").exists()
              
  
 

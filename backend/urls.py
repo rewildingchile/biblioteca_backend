@@ -29,7 +29,8 @@ from googledrive.views import FileDocumentDescriptionView,FileDocumentUpload
 from googledrive.views import PrepareUploadView, FileDocumentDelete
 from googledrive.views import ViewDriveFileView
 from googledrive.views import SearchView 
-from solicitudes.views import ListUserRequest
+from googledrive.views import FileDocumentNameUpdateView
+from solicitudes.views import ListUserRequest, PostUserRequest, CancelUserRequest, DeleteUserRequest , UserRequestFileRename
 
 from  .views import M2mTokenView, Test 
 from logging_conf.views import ver_activity_log, ver_importlibromayor_log
@@ -54,11 +55,16 @@ urlpatterns = [
     path("api/v1/auth/m2m-token",M2mTokenView.as_view()),
     path("test/",Test.as_view()),
     path("api/v1/filedocument/content/", FileDocumentContentView.as_view()  ),
-    path("api/v1/filedocument/description/", FileDocumentDescriptionView.as_view()  ),    
+    path("api/v1/filedocument/description/", FileDocumentDescriptionView.as_view()  ),   
+    path("api/v1/filedocument/name/update/", FileDocumentNameUpdateView.as_view()  ),        
     path("api/v1/upload/",FileDocumentUpload.as_view()),
     path('api/v1/prepare-upload/', PrepareUploadView.as_view(), name='prepare-upload'), 
     path("api/v1/deletefile/",FileDocumentDelete.as_view()),
     path('api/v1/drive/files/<str:file_id>/view/', ViewDriveFileView.as_view(), name='view-drive-file'),
     path('api/v1/search/', SearchView.as_view(), name='view-search'),
-    path('api/v1/user_request/',ListUserRequest.as_view(),name='list-user_request')
+    path('api/v1/user_request/',ListUserRequest.as_view(),name='list-user_request'),
+    path('api/v1/user_request/post/',PostUserRequest.as_view(),name='post-user_request'),
+    path('api/v1/user_request/cancel/', CancelUserRequest.as_view(),name='cancel-user_request'),
+    path('api/v1/user_request/delete/', DeleteUserRequest.as_view(),name='cancel-user_request'),
+    path('api/v1/user_request/file/rename/', UserRequestFileRename.as_view(),name='user_request-file-rename'),
 ]

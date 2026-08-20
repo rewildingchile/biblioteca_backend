@@ -547,4 +547,89 @@ class GoogleDriveService:
         except Exception as e:
             logging.error(f"Error al buscar carpeta '{folder_name}': {str(e)}")
             return None
-    
+
+
+    def rename_file(self, file_id: str, new_name: str, verify_exists: bool = True) -> Dict:
+        """
+        Renombra un archivo o carpeta en Google Drive.
+        
+        Args:
+            file_id: ID del archivo o carpeta a renombrar
+            new_name: Nuevo nombre
+            verify_exists: Si debe verificar que el archivo existe antes de renombrar
+            
+        Returns:
+            Dict con la información del archivo renombrado
+            
+        Raises:
+            HttpError: Si hay error con la API de Google
+            Exception: Si el archivo no existe o hay problemas de permisos
+        """
+        try:
+            # Verificar que el archivo existe y obtener metadata actual
+            if verify_exists:
+                file_metadata = self.service.files().get(
+                    fileId=file_id,
+                    fields='id, name, mimeType, parents, trashed, capabilities',
+                    supportsAllDrives=True
+                ).execute()
+                
+                # Verificar que no esté en la papelera
+                if file_metadata.get('trashed', False):
+                    raise Exception(f"El archivo '{file_metadata.get('name')}' está en la papelera")
+                
+                # Verificar que el nombre no sea el mismo
+                if file_metadata.get('name') == new_name:
+                    logger.info(f"⏭️ El archivo ya tiene el nombre '{new_name}', no se requiere cambio")
+                   
+                
+                # Verificar permisos para renombrar
+                can_edit = file_metadata.get('capabilities', {}).get('canEdit', False)
+                if not can_edit:
+                    raise Exception(f"No tienes permisos para renombrar el archivo '{file_metadata.get('name')}'")
+                
+                logger.info(f"📝 Renombrando: '{file_metadata.get('name')}' -> '{new_name}'")
+            
+            # Preparar metadatos para actualizar
+            file_metadata = {
+                'name': new_name
+            }
+            
+            # Actualizar el nombre del archivo
+            updated_file = self.service.files().update(
+                fileId=file_id,
+                body=file_metadata,
+                fields='id, name, mimeType, parents, webViewLink, createdTime, modifiedTime, size',
+                supportsAllDrives=True
+            ).execute()
+            
+            logger.info(f"✅ Archivo renombrado exitosamente: {updated_file.get('name')} (ID: {file_id})")
+            
+            # Determinar si es archivo o carpeta
+            is_folder = updated_file.get('mimeType') == 'application/vnd.google-apps.folder'
+            
+            return {
+                'success': True,
+                'file_id': updated_file.get('id'),
+                'name': updated_file.get('name'),
+                'mime_type': updated_file.get('mimeType'),
+                'is_folder': is_folder,
+                'web_view_link': updated_file.get('webViewLink'),
+                'modified_time': updated_file.get('modifiedTime'),
+                'size': updated_file.get('size', 'N/A' if is_folder else '0'),
+                'parents': updated_file.get('parents', [])
+            }
+            
+        except HttpError as error:
+            if error.resp.status == 404:
+                logger.error(f"❌ Archivo/carpeta no encontrado: {file_id}")
+                raise Exception(f"El archivo con ID {file_id} no existe en Google Drive")
+            elif error.resp.status == 403:
+                logger.error(f"🚫 Sin permisos para renombrar: {file_id}")
+                raise Exception("No tienes permisos para renombrar este archivo")
+            elif error.resp.status == 400:
+                logger.error(f"❌ Solicitud incorrecta: {error}")
+                raise Exception("El nombre contiene caracteres inválidos o la solicitud es incorrecta")
+            else:
+                logger.error(f"❌ Error renombrando archivo {file_id}: {error}")
+                raise

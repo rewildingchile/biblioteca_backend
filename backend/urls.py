@@ -56,7 +56,7 @@ urlpatterns = [
     path("test/",Test.as_view()),
     path("api/v1/filedocument/content/", FileDocumentContentView.as_view()  ),
     path("api/v1/filedocument/description/", FileDocumentDescriptionView.as_view()  ),   
-    path("api/v1/filedocument/name/update/", FileDocumentNameUpdateView.as_view()  ),        
+    path("api/v1/filedocumentname/update/", FileDocumentNameUpdateView.as_view()  ),        
     path("api/v1/upload/",FileDocumentUpload.as_view()),
     path('api/v1/prepare-upload/', PrepareUploadView.as_view(), name='prepare-upload'), 
     path("api/v1/deletefile/",FileDocumentDelete.as_view()),

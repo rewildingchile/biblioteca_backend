@@ -197,8 +197,12 @@ class GoogleDriveService:
     
         path_parts = Path(relative_path).parts
         current_parent = parent_folder_id
+        created_folders = []  # ✅ Guardar todas las carpetas creadas/encontradas
 
         for folder_name in path_parts:
+
+
+            logger.info(f"📁 Carpeta : {folder_name}") 
             # 🔍 BÚSQUEDA MÁS PRECISA
             escaped_name = folder_name.replace("'", "\\'")
             query = (
@@ -232,11 +236,23 @@ class GoogleDriveService:
                     folders.sort(key=lambda x: x.get('createdTime', ''), reverse=True)
                     logger.info(f"✅ Usando carpeta más reciente: {folders[0]['id']}")
                     current_parent = folders[0]['id']
+                    created_folders.append({
+                        'name': folder_name,
+                        'id': current_parent,
+                        'created': False,
+                        'duplicate': True
+                    })
                     
                 elif len(folders) == 1:
                     # Situación ideal: exactamente una carpeta
                     logger.info(f"📁 Carpeta existente encontrada: {folder_name} (ID: {folders[0]['id']})")
                     current_parent = folders[0]['id']
+                    created_folders.append({
+                        'name': folder_name,
+                        'id': current_parent,
+                        'created': False,
+                        'duplicate': False
+                    })
                     
                 else:
                     # No existe, crear nueva carpeta
@@ -260,6 +276,12 @@ class GoogleDriveService:
                     ).execute()
                     
                     current_parent = folder.get('id')
+                    created_folders.append({
+                        'name': folder_name,
+                        'id': current_parent,
+                        'created': True,
+                        'duplicate': False
+                    })
                     logger.info(f"✅ Carpeta creada: {folder_name} (ID: {current_parent})")
                     
                     # Pequeña pausa para evitar race conditions
@@ -275,15 +297,45 @@ class GoogleDriveService:
             self._folder_cache[cache_key] = current_parent
             logger.info(f"💾 CACHÉ GUARDADO: '{relative_path}' -> {current_parent}")
         
-      
-        return {
-                'file_id': current_parent,
-                'name': folder_name,
-                'size': 0,
-                'mime_type': 'application/vnd.google-apps.folder',
-                'web_view_link':'', 
-                'parent_folder_id':parent_folder_id
+        '''
+        esto es el objeto retornado:
+                {
+                "file_id": "1XyZ789AbCdeFghIjKlMnOpQrStUvWx",
+                "name": "uno",
+                "full_path": "Test/uno",
+                "size": 0,
+                "mime_type": "application/vnd.google-apps.folder",
+                "web_view_link": "",
+                "parent_folder_id": "16j0klxJnQspJ1mvafpnMaRx7Xd1SRIDO",
+                "created_folders": [
+                    {
+                        "name": "Test",
+                        "id": "1Nszy5aI33rGT_7byQVnJcalvrqmF5EV_",
+                        "created": true,
+                        "duplicate": false
+                    },
+                    {
+                        "name": "uno",
+                        "id": "1XyZ789AbCdeFghIjKlMnOpQrStUvWx",
+                        "created": true,
+                        "duplicate": false
+                    }
+                ],
+                "folders_created": 2
             }
+        '''
+       
+        return {
+            'file_id': current_parent,  # ID de la última carpeta (facturas)
+            'name': path_parts[-1],  # 'facturas'
+            'full_path': relative_path,  # '2024/facturas'
+            'size': 0,
+            'mime_type': 'application/vnd.google-apps.folder',
+            'web_view_link': '',
+            'parent_folder_id': parent_folder_id,
+            'created_folders': created_folders,  # ✅ Todas las carpetas procesadas
+            'folders_created': sum(1 for f in created_folders if f['created'])  # ✅ Cuántas se crearon
+        }
     
     def clear_cache(self):
         """✅ Limpia la caché de carpetas"""
@@ -633,3 +685,62 @@ class GoogleDriveService:
             else:
                 logger.error(f"❌ Error renombrando archivo {file_id}: {error}")
                 raise
+
+
+
+def find_folder_by_name_and_parent(self, folder_name: str, parent_folder_id: str) -> Optional[Dict]:
+    """
+    Busca una carpeta específica dentro de un padre dado.
+    
+    Args:
+        folder_name: Nombre de la carpeta a buscar
+        parent_folder_id: ID de la carpeta padre donde buscar
+    
+    Returns:
+        Dict con información de la carpeta si existe, None si no
+    """
+    try:
+        escaped_name = folder_name.replace("'", "\\'")
+        query = (
+            f"name='{escaped_name}' "
+            f"and '{parent_folder_id}' in parents "
+            f"and mimeType='application/vnd.google-apps.folder' "
+            f"and trashed=false"
+        )
+        
+        results = self.service.files().list(
+            q=query,
+            spaces='drive',
+            fields='files(id, name, mimeType, createdTime, modifiedTime, webViewLink)',
+            pageSize=10,
+            supportsAllDrives=True,
+            includeItemsFromAllDrives=True
+        ).execute()
+        
+        folders = results.get('files', [])
+        
+        if not folders:
+            logger.info(f"🔍 Carpeta '{folder_name}' no encontrada en {parent_folder_id}")
+            return None
+        
+        # Si hay múltiples, usar la más reciente
+        if len(folders) > 1:
+            logger.warning(f"⚠️ Múltiples carpetas '{folder_name}' encontradas, usando la más reciente")
+            folders.sort(key=lambda x: x.get('createdTime', ''), reverse=True)
+        
+        folder = folders[0]
+        logger.info(f"🔍 Carpeta encontrada: {folder['name']} (ID: {folder['id']})")
+        
+        return {
+            'id': folder.get('id'),
+            'name': folder.get('name'),
+            'mime_type': folder.get('mimeType'),
+            'created_time': folder.get('createdTime'),
+            'modified_time': folder.get('modifiedTime'),
+            'web_view_link': folder.get('webViewLink')
+        }
+        
+    except HttpError as error:
+        logger.error(f"❌ Error buscando carpeta '{folder_name}': {error}")
+        return None
+

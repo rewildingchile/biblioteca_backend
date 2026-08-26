@@ -36,8 +36,8 @@ import logging
  
 # Estos loggers ya están configurados en settings
  
-logger = logging.getLogger("services")
-
+#logger = logging.getLogger("services")
+logger = logging.getLogger(__name__)
 
 
 
@@ -447,23 +447,74 @@ class PrepareUploadView(APIView):
             else:
                 folder_container_id = folder_id
 
-            parent_obj = GoogleDriveFile.objects.filter(drive_file_id=obj["parent_folder_id"]).first() 
-            d={
-                        "area": area,
-                        "name": obj['name'],
-                        "mime_type": obj['mime_type'],
-                        "parent_drive_file_id": parent_obj,  # Django ORM acepta instancia para ForeignKey
-                        "drive_web_view_link": obj['web_view_link']  ,
-                        "last_synced_at": timezone.now(),
-                       
-            }
-            if upload_granted == False:
-                 d['hidden']=True
-                 
-            GoogleDriveFile.objects.update_or_create(
-                    drive_file_id=folder_container_id,
-                    defaults=d)
 
+          
+
+            # ============================================================
+            # ✅ PASO 1: RECORRER created_folders Y CREAR REGISTROS EN BD
+            # ============================================================
+            
+            # Diccionario para mantener referencia a las carpetas creadas
+            # clave: drive_file_id, valor: objeto GoogleDriveFile
+            folder_registry = {}
+            
+             
+            
+            # 1.2: Recorrer created_folders y crear cada registro
+            created_folders = obj.get('created_folders', [])
+            
+            for folder_info in created_folders:
+                folder_id_to_save = folder_info['id']
+                folder_name = folder_info['name']
+                
+                # Determinar el padre de esta carpeta
+                # Si es la primera carpeta de la lista, su padre es folder_id (raíz)
+                # Si no, su padre es la carpeta anterior en la jerarquía
+                if not folder_registry:
+                    parent_id = folder_id
+                else:
+                    # El padre es la última carpeta registrada
+                    # (asumiendo que created_folders viene en orden jerárquico)
+                    parent_id = list(folder_registry.keys())[-1]
+                
+                # Obtener el objeto padre del registry
+                parent_obj = folder_registry.get(parent_id)
+                
+                # Si no está en el registry, intentar obtenerlo de la BD
+                if not parent_obj:
+                    parent_obj = GoogleDriveFile.objects.filter(
+                        drive_file_id=parent_id
+                    ).first()
+                
+                # Preparar datos para la carpeta
+                folder_data = {
+                    "area": area,
+                    "name": folder_name,
+                    "mime_type": 'application/vnd.google-apps.folder',
+                    "parent_drive_file_id": parent_obj,
+                    "drive_web_view_link": '',  # Google Drive no da link para carpetas intermedias
+                    "last_synced_at": timezone.now(),
+                }
+                
+                # Si no tiene permisos, ocultar
+                if upload_granted is False:
+                    folder_data['hidden'] = True
+                
+                # Crear o actualizar el registro
+                drive_file, created = GoogleDriveFile.objects.update_or_create(
+                    drive_file_id=folder_id_to_save,
+                    defaults=folder_data
+                )
+                
+                # Guardar en el registry para futuras referencias
+                folder_registry[folder_id_to_save] = drive_file
+                
+                if folder_info.get('created', False):
+                    logger.info(f"✅ Carpeta creada en BD: {folder_name} (ID: {folder_id_to_save})")
+                else:
+                    logger.info(f"📁 Carpeta existente en BD: {folder_name} (ID: {folder_id_to_save})")
+            
+            
 
             data_response={
                                         'success': True,
@@ -595,7 +646,7 @@ class FileDocumentUpload(APIView):
             )
         
         try:
-            # ✅ Esto ahora es thread-safe y con caché
+            
             if relative_path:
                 final_parent_id = google_drive.create_folder_structure(
                     folder_id, 
@@ -629,9 +680,11 @@ class FileDocumentUpload(APIView):
                 parent_obj = None
                 if final_parent_id:
                     parent_obj = GoogleDriveFile.objects.filter(drive_file_id=drive_file["parent_folder_id"]).first()
-                logger.info(f"parent obj: {parent_obj}")
 
                 
+                logger.info(f"parent obj: {final_parent_id}")
+                cantidad = GoogleDriveFile.objects.filter(drive_file_id=drive_file["parent_folder_id"]).count()
+                logger.info(f"Cantidad de objetos encontrados: {cantidad}")
 
                 if upload_granted:
                     GoogleDriveFile.objects.update_or_create(

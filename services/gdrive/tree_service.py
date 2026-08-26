@@ -212,18 +212,18 @@ def obtener_arbol_area(area_id,user_id):
             "is_folder": (
                 item["mime_type"] == FOLDER_MIME
             ),
-            "user_request": user_request_value,
-            "web_view_link": item["drive_web_view_link"],
+            #"user_request": user_request_value,
+            #"web_view_link": item["drive_web_view_link"],
 
-            "modified_time": item[
-                "last_known_modified_time"
-            ],
-            "text_content": item[
-                            "document__text_content"
-                        ],
-             "description": item[
-                            "document__description"
-                        ],            
+            #"modified_time": item[
+            #    "last_known_modified_time"
+            #],
+            #"text_content": item[
+            #                "document__text_content"
+            #            ],
+            # "description": item[
+             #               "document__description"
+             #           ],            
             "parent_drive_file_id":item["parent_drive_file_id"]             ,
             "children": []
 

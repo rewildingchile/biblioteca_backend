@@ -57,7 +57,11 @@ class GoogleDriveFile(models.Model):
         help_text="Marca de tiempo de la última sincronización con Google Drive.",
         null=True,
     )
-
+    size = models.PositiveBigIntegerField(
+        null=True,
+        blank=True,
+        help_text="Tamaño del archivo en bytes (solo para archivos, null para carpetas)."
+    )
     class Meta:
         verbose_name = "Archivo de Google Drive"
         verbose_name_plural = "Archivos de Google Drive"

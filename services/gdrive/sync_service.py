@@ -123,6 +123,7 @@ def sync_full(
                 "drive_web_view_link": root_web_link,
                 "last_known_modified_time": root_modified_dt,
                 "last_synced_at": timezone.now(),
+                "size": None,  # Las carpetas no tienen tamaño
             },
         )
         logger.info(f"Raíz {folder_id} {'creada' if root_created else 'actualizada'}")
@@ -152,7 +153,7 @@ def sync_full(
                     q=f"{parents_query} and trashed=false",
                     driveId=drive_id,
                     corpora="drive",
-                    fields="nextPageToken, files(id, name, mimeType, modifiedTime, webViewLink)",
+                    fields="nextPageToken, files(id, name, mimeType, modifiedTime, webViewLink,size)",
                     pageToken=page_token,
                     pageSize=1000,
                     supportsAllDrives=True,
@@ -188,7 +189,7 @@ def sync_full(
         mime = archivo["mimeType"]
         modified_time = archivo.get("modifiedTime")
         web_link = archivo.get("webViewLink")
-
+        size = archivo.get("size")
         if modified_time:
             modified_dt = datetime.fromisoformat(modified_time.replace("Z", "+00:00"))
         else:
@@ -205,12 +206,13 @@ def sync_full(
                     "drive_web_view_link": web_link,
                     "last_known_modified_time": modified_dt,
                     "last_synced_at": timezone.now(),
+                    "size": size
                 },
             )
             if created:
-                logger.debug(f"Nuevo: {file_id} - {nombre}")
+                logger.debug(f"Nuevo: {file_id} - {nombre}  (size: {size})")
             else:
-                logger.debug(f"Actualizado: {file_id} - {nombre}")
+                logger.debug(f"Actualizado: {file_id} - {nombre}  (size: {size})")
 
             # Si es carpeta,  'enqueue' sus hijos (pero no la carpeta misma)
             if mime == FOLDER_MIME:
@@ -250,203 +252,6 @@ def sync_full(
                 logger.warning("No se recibió startPageToken")
         except HttpError as e:
             logger.error(f"Error obteniendo startPageToken: {e}")
-
-def sync_full_old(
-    service,
-    folder_id,
-    area,
-    parent_obj=None,
-    is_root=True,
-    sync_started_at=None
-):
-    """
-    Recorre recursivamente una carpeta de Google Drive
-    y guarda archivos/carpetas en BD.
-    """
-    logger.info(f"sincronizando full {folder_id}")
-    
-    # timestamp único para TODA la sincronización
-    if sync_started_at is None:
-        sync_started_at = timezone.now()
-
-    page_token = None
-
-    while True:
-
-        resultados = service.files().list(
-
-            q=f"'{folder_id}' in parents and trashed=false",
-
-            fields="nextPageToken, files(id, name, mimeType, modifiedTime, webViewLink)",
-
-            pageToken=page_token,
-
-            supportsAllDrives=True,
-
-            includeItemsFromAllDrives=True,
-
-            corpora="allDrives"
-
-        ).execute()
-
-        archivos = resultados.get("files", [])
-
-        for archivo in archivos:
-         try:
-            file_id = archivo["id"]
-            nombre = archivo["name"]
-            mime = archivo["mimeType"]
-            modified_time = archivo.get("modifiedTime")
-            web_link = archivo.get("webViewLink")
-
-            # convertir fecha ISO Google -> datetime
-            if modified_time:
-
-                modified_dt = datetime.datetime.fromisoformat(
-                    modified_time.replace("Z", "+00:00")
-                )
-
-            else:
-
-                modified_dt = timezone.now()
-
-            
-            logger.info(f"Procesando files : { file_id}, {area}")
-                
-            obj, created = GoogleDriveFile.objects.update_or_create(
-
-                    drive_file_id=file_id,
-                   
-                    defaults={
-
-                        "area": area,
-
-                        "name": nombre,
-
-                        "mime_type": mime,
-
-                        "parent_drive_file_id": parent_obj if parent_obj else None,
-
-                        "drive_web_view_link": web_link,
-
-                        "last_known_modified_time": modified_dt,
-
-                        "last_synced_at": timezone.now(),
-
-                    }
-
-                )
-           
-
-            # recursion
-            if mime == FOLDER_MIME:
-
-                sync_full(
-
-                    service=service,
-
-                    folder_id=file_id,
-
-                    area=area,
-
-                    parent_obj=obj,
-                    
-                    is_root=False,
-
-                    sync_started_at=sync_started_at
-
-                )
-         except Exception as e:
-                    logger.exception(
-                    f"Error procesando "
-                    f"file={archivo}"
-                    )
-        
-        page_token = resultados.get("nextPageToken")
-
-        if not page_token:
-            break
-
-    # SOLO la raíz realiza limpieza y token
-    if is_root:
-
-        logger.info(
-            "Eliminando registros obsoletos"
-        )
-
-        # eliminar archivos que ya no existen
-        # __lt : less than
-        GoogleDriveFile.objects.filter(
-
-            area=area,
-
-            last_synced_at__lt=sync_started_at 
-
-        ).delete()
-
-        logger.info(
-            "Obteniendo driveId"
-        )
-
-        # obtener driveId REAL desde folder_id
-        root_info = service.files().get(
-
-            fileId=folder_id,
-
-            fields="driveId",
-
-            supportsAllDrives=True
-
-        ).execute()
-
-        drive_id = root_info["driveId"]
-
-        logger.info(
-            f"drive_id={drive_id}"
-        )
-
-        logger.info(
-            "Solicitando startPageToken"
-        )
-
-        token_data = (
-
-            service.changes()
-
-            .getStartPageToken(
-
-                driveId=drive_id,
-
-                supportsAllDrives=True
-
-            )
-
-            .execute()
-        )
-
-        start_page_token = (
-            token_data["startPageToken"]
-        )
-
-        GoogleDriveSyncState.objects.update_or_create(
-
-            area=area,
-
-            defaults={
-
-                "start_page_token":
-                    start_page_token,
-
-                "last_full_sync_at":
-                    timezone.now()
-            }
-        )
-
-        logger.info(
-            f"Token inicial guardado: "
-            f"{start_page_token}"
-        )
-
 
 
 import logging
@@ -575,194 +380,4 @@ def sync_changes(service, folder_id, area):
 
     logger.info(f"sync_changeXXX completado area={area.id}")
 
-
-def sync_changes_old(service,folder_id,  area):
-
-    state = GoogleDriveSyncState.objects.get(area=area)
-
-    token = state.start_page_token
-
-    sync_time = timezone.now()
-    logger.info(f"sync_time {sync_time}")
-
-
-    root_info = service.files().get(
-
-        fileId=folder_id,
-
-        fields="driveId",
-
-        supportsAllDrives=True
-
-    ).execute()
-
-    drive_id = root_info["driveId"]
-
-
-    while token:
-        try:
-            resultados = service.changes().list(
-
-                pageToken=token,
-
-                driveId=drive_id,
-
-                supportsAllDrives=True,
-
-                includeItemsFromAllDrives=True,
-
-                includeRemoved=True,
-
-                restrictToMyDrive=False,
-
-                fields=(
-                    "nextPageToken,"
-                    "newStartPageToken,"
-                    "changes("
-                        "fileId,"
-                        "removed,"
-                        "file("
-                            "id,"
-                            "name,"
-                            "mimeType,"
-                            "modifiedTime,"
-                            "webViewLink,"
-                            "parents,"
-                            "trashed"
-                        ")"
-                    ")"
-                )
-
-            ).execute()
-           
-            logger.info(resultados)
-        except HttpError as e:
-            #token expirado
-            if e.resp.status == 410:
-
-                logger.warning(
-                    "Google Drive pageToken expirado. "
-                    "Solicitando nuevo token."
-                )
-
-                # IMPORTANTE:
-                # reconciliación completa
-
-                sync_full(
-                    service=service,
-                    folder_id=folder_id,
-                    area=area
-                )
-
-                return
-
-            raise
-        
-        logger.info(
-            f"Cantidad cambios: "
-            f"{len(resultados.get('changes', []))}"
-        )     
-        for cambio in resultados.get("changes", []):
-         try:
-          
-            logger.info(
-                f"Cambio detectado: "
-                f"{cambio}"
-            )
-            file_id = cambio.get("fileId")
-
-            if not file_id:
-
-                logger.warning(
-                    f"Cambio sin fileId: {cambio}"
-                )
-
-                continue
-          
-            # eliminado
-            if cambio.get("removed"):
-
-                GoogleDriveFile.objects.filter(
-                    drive_file_id=file_id
-                ).delete()
-
-                continue
-
-            file_data = cambio.get("file")
-
-            if not file_data:
-                continue
-
-            # papelera
-            if file_data.get("trashed"):
-                GoogleDriveFile.objects.filter(
-                    drive_file_id=file_id
-                ).delete()
-
-                continue
-             
-            '''
-            parents puede venir vacío cuando:
-                se mueve archivo
-                se elimina parent
-                permisos insuficientes
-                Shared Drives
-            '''
-            parents = file_data.get("parents", [])
-            parent_drive_id = parents[0] if parents else None
-            parent_obj = None
-
-            if parent_drive_id:
-                parent_obj = GoogleDriveFile.objects.filter(
-                    drive_file_id=parent_drive_id
-                ).first()
-
-            GoogleDriveFile.objects.update_or_create(
-
-                drive_file_id=file_id,
-
-                defaults={
-
-                    "area": area,
-
-                    "name": file_data.get("name"),
-
-                    "mime_type": file_data.get("mimeType"),
-
-                    "parent_drive_file_id": parent_obj,
-
-                    "drive_web_view_link":
-                        file_data.get("webViewLink"),
-
-                    "last_synced_at": sync_time,
-                }
-            )
-         except Exception:
-
-                logger.exception(
-                    f"Error procesando "
-                    f"cambio file_id={file_id}"
-                )
-        token = resultados.get("nextPageToken")
-
-        if token:
-            continue
-
-        # último token válido    
-        new_token = resultados.get("newStartPageToken")
-
-        if new_token:
-
-                state.start_page_token = new_token
-                state.save(update_fields=["start_page_token"])
-                logger.info(
-                    f"Token actualizado: "
-                    f"{new_token}"
-                )
-
-        break        
-    
-    logger.info(
-        f"sync_changes completado "
-        f"area={area.id}"
-    )
+ 

@@ -62,6 +62,7 @@ def obtener_arbol_subfolder(folder_id):
                 "drive_file_id": item["drive_file_id"],
                 "name": item["name"],
                 "mime_type": item["mime_type"],
+                "size": item["size"],
                 "is_folder": is_folder,
                 "web_view_link": item["drive_web_view_link"],
                 "modified_time": item["last_known_modified_time"].isoformat() if item["last_known_modified_time"] else None,
@@ -180,6 +181,7 @@ def obtener_arbol_area(area_id,user_id):
         "drive_file_id",
         "name",
         "mime_type",
+        "size",
         "parent_drive_file_id",
         "drive_web_view_link",
         "last_known_modified_time",
@@ -208,6 +210,8 @@ def obtener_arbol_area(area_id,user_id):
             "name": item["name"],
 
             "mime_type": item["mime_type"],
+
+            "size": item["size"],
 
             "is_folder": (
                 item["mime_type"] == FOLDER_MIME

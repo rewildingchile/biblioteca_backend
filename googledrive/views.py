@@ -1044,11 +1044,11 @@ class ViewDriveFileView(APIView):
             ).execute()
             
             # Verificar que sea PDF
-            if file_metadata.get('mimeType') != 'application/pdf':
-                return Response(
-                    {'error': 'El archivo no es un PDF'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+            #if file_metadata.get('mimeType') != 'application/pdf':
+            #    return Response(
+            #        {'error': 'El archivo no es un PDF'},
+            #        status=status.HTTP_400_BAD_REQUEST
+            #    )
             
             # Descargar el archivo
             request_download = google_drive.service.files().get_media(
@@ -1070,7 +1070,7 @@ class ViewDriveFileView(APIView):
                     'mime_type': file_metadata.get('mimeType'),
                     'size': file_metadata.get('size'),
                     'content': file_base64,
-                    'content_type': 'application/pdf'
+                    'content_type': file_metadata.get('content_type')
                 }
             })
             

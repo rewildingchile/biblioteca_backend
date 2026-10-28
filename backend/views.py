@@ -261,9 +261,79 @@ class GenerateBackupCodesView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        BackupCode.objects.filter(user=user).delete()
+       
 
-        return generate_single_backup_code(user)
+         # Borrar códigos antiguos
+        BackupCode.objects.filter(user=user).delete()
+        
+        # Generar un único código de 6 dígitos
+        code = str(secrets.randbelow(10**6)).zfill(6)
+        
+            # Guardar hash en la base de datos
+        BackupCode.objects.create(
+                user=user,
+                code_hash=hashlib.sha256(code.encode()).hexdigest()
+        )
+            # Crear el correo
+            
+        import requests
+        from django.http import JsonResponse
+        from django.conf import settings
+        
+         
+        
+        url = "https://api.brevo.com/v3/smtp/email"
+        
+        payload = {
+                "sender": {
+                    "name": "Admin Rewilding Chile",
+                    "email": "admin@rewildingchile.org"
+                },
+                "to": [
+                    {
+                        "email": user.email,
+                        "name": str( user.first_name)+ " " + str( user.last_name)  
+                    }
+                ],
+                "subject": "tu codigo de acceso para presupuestos",
+                "htmlContent": f"""
+                <html>
+                <body>
+                <p>Este es tu codigo y no lo compartas con nadie</p>
+                <p>codigo temporal: {code}</p>
+                </body>
+                </html>
+                """
+            }
+            #"api-key": settings.BREVO_API_KEY,
+        headers = {
+                "accept": "application/json",
+                "api-key": os.getenv("BREVO_API_KEY"),
+                "content-type": "application/json"
+        }
+        
+           
+        
+        from requests.exceptions import RequestException, Timeout
+        try:
+                response = requests.post(url, json=payload, headers=headers, timeout=10)
+        
+                # ✅ Comprobación 1: código de estado
+                if response.status_code == 201:  # Brevo devuelve 201 en éxito
+                    return {"ok": True, "email": user.email}
+        
+                # ❌ Comprobación 2: error HTTP devuelto por Brevo
+                return {
+                    "ok": False,
+                    "status_code": response.status_code,
+                    "error": response.text  # Brevo devuelve JSON con el detalle
+                }
+        
+        except Timeout:
+                return {"ok": False, "error": "Timeout conectando a Brevo"}
+        
+        except RequestException as e:
+                return {"ok": False, "error": f"Error de red: {str(e)}"} 
 
        
     
@@ -291,7 +361,7 @@ import secrets
  
 from django.conf import settings
 
-def generate_single_backup_code(user):
+def generate_single_backup_code_old(user):
     # Borrar códigos antiguos
     BackupCode.objects.filter(user=user).delete()
 

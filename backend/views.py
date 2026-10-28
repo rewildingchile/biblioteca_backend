@@ -263,11 +263,9 @@ class GenerateBackupCodesView(APIView):
 
         BackupCode.objects.filter(user=user).delete()
 
-        codes = generate_single_backup_code(user)
+        generate_single_backup_code(user)
 
-        return Response({
-            "backup_codes": codes
-        })
+       
     
 import secrets
 import hashlib
@@ -290,8 +288,7 @@ def generate_backup_codes(user, total=8):
 
 
 import secrets
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+ 
 from django.conf import settings
 
 def generate_single_backup_code(user):
@@ -344,9 +341,30 @@ def generate_single_backup_code(user):
         "content-type": "application/json"
     }
 
-    response = requests.post(url, json=payload, headers=headers)
+   
 
-    return "ok "+user.email
+    from requests.exceptions import RequestException, Timeout
+    try:
+        response = requests.post(url, json=payload, headers=headers, timeout=10)
+
+        # ✅ Comprobación 1: código de estado
+        if response.status_code == 201:  # Brevo devuelve 201 en éxito
+            return {"ok": True, "email": user.email}
+
+        # ❌ Comprobación 2: error HTTP devuelto por Brevo
+        return {
+            "ok": False,
+            "status_code": response.status_code,
+            "error": response.text  # Brevo devuelve JSON con el detalle
+        }
+
+    except Timeout:
+        return {"ok": False, "error": "Timeout conectando a Brevo"}
+
+    except RequestException as e:
+        return {"ok": False, "error": f"Error de red: {str(e)}"}
+
+    
      
 class Test(APIView):
     def get(self,request):

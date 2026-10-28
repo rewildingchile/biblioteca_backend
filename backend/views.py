@@ -346,7 +346,7 @@ def generate_single_backup_code(user):
 
     response = requests.post(url, json=payload, headers=headers)
 
-    return "ok "+os.getenv("BREVO_API_KEY")
+    return "ok "+user.email
      
 class Test(APIView):
     def get(self,request):

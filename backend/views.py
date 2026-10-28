@@ -327,7 +327,7 @@ def generate_single_backup_code(user):
                 "name": str( user.first_name)+ " " + str( user.last_name)  
             }
         ],
-        "subject": "tu codigo de acceso para presupuestos",
+        "subject": "tu codigo de acceso Biblioteca Rewilding",
         "htmlContent": f"""
         <html>
         <body>

@@ -263,7 +263,7 @@ class GenerateBackupCodesView(APIView):
 
         BackupCode.objects.filter(user=user).delete()
 
-        generate_single_backup_code(user)
+        return generate_single_backup_code(user)
 
        
     
